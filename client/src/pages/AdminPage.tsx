@@ -80,9 +80,7 @@ export function AdminPage() {
   const loadQuiz = useCallback(async () => {
     try {
       const { data } = await http.get<QuizQuestion[]>("/quiz/questions");
-      const round2Questions = data
-        .filter((q) => q.roundNumber === 2)
-        .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+      const round2Questions = data.filter((q) => q.roundNumber === 2);
       setQuizQuestions(round2Questions);
     } catch {
       setQuizQuestions([]);
