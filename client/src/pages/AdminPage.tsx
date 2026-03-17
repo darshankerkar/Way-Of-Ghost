@@ -16,6 +16,7 @@ export function AdminPage() {
   const [message, setMessage] = useState("");
   const [eventState, setEventState] = useState<EventState | null>(null);
   const [matchups, setMatchups] = useState<Matchup[]>([]);
+  const [roundMatchupCounts, setRoundMatchupCounts] = useState<Record<number, number>>({ 1: 0, 2: 0, 3: 0 });
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   // Problem creation
@@ -48,6 +49,20 @@ export function AdminPage() {
   const loadMatchups = useCallback(async (round: number) => {
     try { const { data } = await http.get<Matchup[]>(`/round/${round}/matchups`); setMatchups(data); } catch {}
   }, []);
+  const loadRoundMatchupCounts = useCallback(async () => {
+    try {
+      const [r1, r2, r3] = await Promise.all([
+        http.get<Matchup[]>("/round/1/matchups"),
+        http.get<Matchup[]>("/round/2/matchups"),
+        http.get<Matchup[]>("/round/3/matchups"),
+      ]);
+      setRoundMatchupCounts({
+        1: r1.data.length,
+        2: r2.data.length,
+        3: r3.data.length,
+      });
+    } catch {}
+  }, []);
   const loadQuiz = useCallback(async () => {
     try { const { data } = await http.get<QuizQuestion[]>("/quiz/questions"); setQuizQuestions(data); } catch {}
   }, []);
@@ -55,13 +70,19 @@ export function AdminPage() {
     try { const { data } = await http.get<LeaderboardEntry[]>("/round/leaderboard/global"); setLeaderboard(data); } catch {}
   }, []);
 
-  useEffect(() => { loadPending(); loadEventState(); loadLeaderboard(); }, [loadPending, loadEventState, loadLeaderboard]);
+  useEffect(() => {
+    loadPending();
+    loadEventState();
+    loadRoundMatchupCounts();
+    loadLeaderboard();
+  }, [loadPending, loadEventState, loadRoundMatchupCounts, loadLeaderboard]);
 
   useEffect(() => {
     if (tab === "quiz") loadQuiz();
     if (tab === "rounds" && eventState) loadMatchups(eventState.currentRound);
+    if (tab === "rounds") loadRoundMatchupCounts();
     if (tab === "leaderboard") loadLeaderboard();
-  }, [tab, eventState, loadQuiz, loadMatchups, loadLeaderboard]);
+  }, [tab, eventState, loadQuiz, loadMatchups, loadRoundMatchupCounts, loadLeaderboard]);
 
   async function updateUser(userId: string, status: "APPROVED" | "REJECTED") {
     await http.patch(`/admin/users/${userId}`, { status });
@@ -75,6 +96,7 @@ export function AdminPage() {
       flash(data.message);
       loadEventState();
       loadMatchups(n);
+      loadRoundMatchupCounts();
     } catch (err) {
       flash((err as { response?: { data?: { message?: string } } }).response?.data?.message ?? "Failed");
     }
@@ -87,6 +109,7 @@ export function AdminPage() {
       flash(data.message);
       loadEventState();
       setMatchups([]);
+      loadRoundMatchupCounts();
     } catch (err) {
       flash((err as { response?: { data?: { message?: string } } }).response?.data?.message ?? "Failed");
     }
@@ -168,29 +191,41 @@ export function AdminPage() {
               <div className="mt-3 space-y-3">
                 {[1, 2, 3].map((n) => {
                   const isLive = eventState?.currentRound === n && eventState?.roundStatus === "LIVE";
+                  const hasExistingMatchups = (roundMatchupCounts[n] ?? 0) > 0;
+                  const canStart = !isLive && !hasExistingMatchups;
                   return (
                     <div key={n} className="flex items-center gap-3">
                       <span className="w-20 text-sm font-medium text-gray-300">Round {n}</span>
                       {isLive && (
                         <span className="rounded bg-ghost-green/20 px-2 py-0.5 text-xs font-semibold text-ghost-green">LIVE</span>
                       )}
+                      {!isLive && hasExistingMatchups && (
+                        <span className="rounded bg-ghost-red/20 px-2 py-0.5 text-xs font-semibold text-ghost-red">RESET REQUIRED</span>
+                      )}
+                      {!isLive && !hasExistingMatchups && (
+                        <span className="rounded bg-gray-700/70 px-2 py-0.5 text-xs font-semibold text-gray-300">READY</span>
+                      )}
                       <button
                         className="rounded bg-ghost-gold px-4 py-1.5 text-sm font-semibold text-black disabled:cursor-not-allowed disabled:opacity-40"
                         onClick={() => startRound(n)}
-                        disabled={isLive}
+                        disabled={!canStart}
                       >
                         Start
                       </button>
                       <button
-                        className="rounded bg-ghost-red/80 px-4 py-1.5 text-sm font-semibold text-white hover:bg-ghost-red"
+                        className="rounded bg-ghost-gold/80 px-4 py-1.5 text-sm font-semibold text-black hover:bg-ghost-gold"
                         onClick={() => resetRound(n)}
                       >
                         Reset
                       </button>
+                      <span className="text-xs text-gray-500">Matchups: {roundMatchupCounts[n] ?? 0}</span>
                     </div>
                   );
                 })}
               </div>
+              <p className="mt-3 text-xs text-gray-500">
+                Start is blocked if the round already has matchups. Use Reset first to clear stale pairings before restarting.
+              </p>
             </div>
             {/* Matchups */}
             {matchups.length > 0 && (
@@ -237,8 +272,8 @@ export function AdminPage() {
                     <p className="text-sm text-gray-400">{u.email} — {u.college}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="rounded bg-ghost-green px-3 py-1 text-sm text-black" onClick={() => updateUser(u.id, "APPROVED")}>Approve</button>
-                    <button className="rounded bg-ghost-red px-3 py-1 text-sm text-white" onClick={() => updateUser(u.id, "REJECTED")}>Reject</button>
+                    <button className="rounded bg-ghost-gold px-3 py-1 text-sm text-black" onClick={() => updateUser(u.id, "APPROVED")}>Approve</button>
+                    <button className="rounded bg-ghost-gold/80 px-3 py-1 text-sm text-black hover:bg-ghost-gold" onClick={() => updateUser(u.id, "REJECTED")}>Reject</button>
                   </div>
                 </div>
               ))}
@@ -299,7 +334,7 @@ export function AdminPage() {
                 <label className="flex items-center gap-1 text-sm text-gray-400">
                   <input type="checkbox" checked={tcHidden} onChange={(e) => setTcHidden(e.target.checked)} /> Hidden
                 </label>
-                <button className="rounded bg-gray-700 px-3 py-1 text-sm hover:bg-gray-600" onClick={() => {
+                <button className="rounded bg-ghost-gold/80 px-3 py-1 text-sm text-black hover:bg-ghost-gold" onClick={() => {
                   setTestCases([...testCases, { input: tcInput, expected: tcExpected, isHidden: tcHidden }]);
                   setTcInput(""); setTcExpected("");
                 }}>Add Test Case</button>
@@ -307,7 +342,7 @@ export function AdminPage() {
               {testCases.map((tc, i) => (
                 <div key={i} className="mt-1 flex items-center justify-between rounded bg-black/20 px-3 py-1 text-xs font-mono">
                   <span>In: {tc.input.slice(0, 30)} | Out: {tc.expected.slice(0, 30)} {tc.isHidden ? "(hidden)" : ""}</span>
-                  <button className="text-ghost-red" onClick={() => setTestCases(testCases.filter((_, j) => j !== i))}>x</button>
+                  <button className="text-ghost-gold" onClick={() => setTestCases(testCases.filter((_, j) => j !== i))}>x</button>
                 </div>
               ))}
             </div>
@@ -367,7 +402,7 @@ export function AdminPage() {
                       <p className="text-sm font-medium">Q{idx + 1}: {q.questionText}</p>
                       <p className="text-xs text-gray-400">{q.timeLimit}s | {q.points}pts | Answer: {String.fromCharCode(65 + q.correctIndex)}</p>
                     </div>
-                    <button className="rounded bg-ghost-green px-3 py-1 text-sm font-semibold text-black" onClick={() => pushQuestion(q.id)}>
+                    <button className="rounded bg-ghost-gold px-3 py-1 text-sm font-semibold text-black" onClick={() => pushQuestion(q.id)}>
                       Push
                     </button>
                   </div>

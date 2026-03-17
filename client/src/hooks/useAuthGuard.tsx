@@ -46,7 +46,7 @@ export function AuthGuard() {
   }
 
   return (
-    <div className="min-h-screen bg-ghost-bg">
+    <div className="app-shell min-h-screen bg-ghost-bg">
       <Navbar />
       <Outlet />
     </div>

@@ -34,14 +34,14 @@ export function Round1Page() {
     try {
       const { data } = await http.get<Matchup[]>("/round/1/matchups");
 
-      // Find the user's matchups, prefer LIVE over COMPLETED
+      // Find only this user's matchups in backend-provided order (latest first)
       const myMatches = data.filter(
         (m) => m.user1.id === user.id || m.user2.id === user.id
       );
 
-      // Prefer the latest LIVE matchup; fall back to the latest any-status matchup
+      // Always prefer the newest LIVE matchup; otherwise use the newest available matchup.
       const liveMatch = myMatches.find((m) => m.status === "LIVE");
-      const myMatch = liveMatch ?? myMatches[myMatches.length - 1] ?? null;
+      const myMatch = liveMatch ?? myMatches[0] ?? null;
 
       if (myMatch) {
         // Reset all state when matchup changes
@@ -93,6 +93,14 @@ export function Round1Page() {
 
   // Initial fetch
   useEffect(() => { fetchMatchup(); }, [fetchMatchup]);
+
+  // Safety poll to pick up latest matchup/problem after admin restarts round.
+  useEffect(() => {
+    const id = setInterval(() => {
+      fetchMatchup();
+    }, 15000);
+    return () => clearInterval(id);
+  }, [fetchMatchup]);
 
   // Listen for round:started and round:reset to re-fetch matchup
   useEffect(() => {
@@ -267,6 +275,11 @@ export function Round1Page() {
           <div className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-gray-300">
             {problem.description}
           </div>
+          {(!problem.testCases || problem.testCases.length === 0) && (
+            <div className="mt-4 rounded border border-ghost-red/40 bg-ghost-red/10 p-3 text-xs text-ghost-red">
+              This problem currently has no test cases configured. Run/Submit may show 0/0 until admins add test cases.
+            </div>
+          )}
           {problem.testCases && (
             <div className="mt-6">
               <h3 className="text-sm font-semibold text-ghost-gold">Sample Test Cases</h3>
@@ -278,6 +291,9 @@ export function Round1Page() {
                   <pre className="text-ghost-green">{tc.expected}</pre>
                 </div>
               ))}
+              {problem.testCases.filter((tc) => !tc.isHidden).length === 0 && (
+                <p className="mt-2 text-xs text-gray-500">No public sample test cases available.</p>
+              )}
             </div>
           )}
         </div>
@@ -289,11 +305,11 @@ export function Round1Page() {
               {LANGUAGES.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
             </select>
             <div className="ml-auto flex gap-2">
-              <button className="rounded bg-gray-700 px-4 py-1.5 text-sm font-semibold hover:bg-gray-600 disabled:opacity-50"
+              <button className="rounded bg-ghost-gold/80 px-4 py-1.5 text-sm font-semibold text-black hover:bg-ghost-gold disabled:opacity-50"
                 onClick={handleRun} disabled={loading || timeLeft === 0}>
                 {loading ? "Running..." : "Run"}
               </button>
-              <button className="rounded bg-ghost-green px-4 py-1.5 text-sm font-semibold text-black hover:bg-green-400 disabled:opacity-50"
+              <button className="rounded bg-ghost-gold px-4 py-1.5 text-sm font-semibold text-black hover:bg-ghost-gold/90 disabled:opacity-50"
                 onClick={handleSubmit} disabled={loading || timeLeft === 0}>
                 Submit
               </button>
