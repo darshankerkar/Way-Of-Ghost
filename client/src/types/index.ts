@@ -39,6 +39,7 @@ export type Matchup = {
   status: MatchupStatus;
   startedAt: string | null;
   endedAt: string | null;
+  timerExtension: number;
 };
 
 export type EventState = {

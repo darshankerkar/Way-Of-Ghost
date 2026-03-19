@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { http } from "../api/http";
 import { useAuthStore } from "../store/auth.store";
 import { getSocket } from "../socket/client";
@@ -9,8 +9,10 @@ import { GhostFigure } from "./LandingPage";
 export function DashboardPage() {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
+  const location = useLocation();
   const [eventState, setEventState]   = useState<EventState | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const r3Locked = (location.state as { r3Locked?: boolean } | null)?.r3Locked === true;
 
 
 
@@ -60,11 +62,11 @@ export function DashboardPage() {
     };
   }, []);
 
-  const roundNames = ["", "Shadow Tactics", "Shrine Of Wisdom", "Khan's Ultimatum"];
+  const roundNames = ["", "Shrine Of Wisdom", "Shadow Tactics", "Khan's Ultimatum"];
   const roundDescs = [
     "",
+    "1v1 Debugging Compiler — Find and fix bugs in Java code faster than your opponent",
     "1v1 Coding Duel — Solve algorithmic problems head-to-head",
-    "1v1 Debugging MCQ — Find bugs in Java code faster than your opponent",
     "MVP Building — Build a working prototype from a problem statement",
   ];
   const roundIcons = ["", "R1", "R2", "R3"];
@@ -117,6 +119,12 @@ export function DashboardPage() {
         )}
 
         {/* Active round banner */}
+        {r3Locked && (
+          <div className="rounded-xl border border-ghost-red/40 bg-ghost-red/10 px-4 py-3 text-sm text-ghost-red text-center mb-4">
+            🔒 You need at least <strong>200 Bits</strong> to access Khan's Ultimatum (Round 3). Keep earning!
+          </div>
+        )}
+
         {eventState && eventState.roundStatus === "LIVE" && eventState.currentRound > 0 && (
           <div className="glass-card border-ghost-gold/30 p-5 mb-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -150,15 +158,22 @@ export function DashboardPage() {
         <div className="grid gap-4 sm:grid-cols-3 mb-6">
           {[1, 2, 3].map((r) => {
             const isLive = eventState?.currentRound === r && eventState.roundStatus === "LIVE";
+            const isRound3Locked = r === 3 && (myEntry?.bits ?? 0) < 200;
             return (
               <button
                 key={r}
+                disabled={isRound3Locked}
                 onClick={() => void enterRound(r)}
-                className={`glass-card p-5 group transition-all duration-200 hover:-translate-y-1 hover:border-ghost-gold/25 text-left ${isLive ? "border-ghost-gold/35" : ""}`}
+                className={`glass-card p-5 group transition-all duration-200 text-left ${
+                  isRound3Locked
+                    ? "opacity-40 cursor-not-allowed"
+                    : "hover:-translate-y-1 hover:border-ghost-gold/25 cursor-pointer"
+                } ${isLive ? "border-ghost-gold/35" : ""}`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-md border border-ghost-gold/30 px-2 text-xs font-bold tracking-wide text-ghost-gold">{roundIcons[r]}</span>
                   {isLive && <span className="contest-live-dot text-xs text-ghost-green font-semibold">LIVE</span>}
+                  {isRound3Locked && <span className="text-[10px] uppercase font-bold text-gray-500">🔒 Need 200 Bits</span>}
                 </div>
                 <p className="text-xs uppercase tracking-widest text-gray-500">Round {r}</p>
                 <p className="text-base font-bold mt-1 text-white group-hover:text-ghost-gold transition-colors">{roundNames[r]}</p>

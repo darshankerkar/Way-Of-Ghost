@@ -5,7 +5,6 @@ import { errorHandler } from "./middleware/error-handler.js";
 import { adminRouter } from "./routes/admin.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { problemRouter } from "./routes/problem.routes.js";
-import { quizRouter } from "./routes/quiz.routes.js";
 import { roundRouter } from "./routes/round.routes.js";
 import { submissionRouter } from "./routes/submission.routes.js";
 
@@ -28,6 +27,5 @@ app.use("/api/admin", adminRouter);
 app.use("/api/problem", problemRouter);
 app.use("/api/round", roundRouter);
 app.use("/api/submission", submissionRouter);
-app.use("/api/quiz", quizRouter);
 
 app.use(errorHandler);

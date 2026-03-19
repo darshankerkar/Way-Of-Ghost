@@ -33,9 +33,7 @@ async function main() {
   await prisma.$transaction([
     prisma.submission.deleteMany({}),
     prisma.matchup.deleteMany({}),
-    prisma.quizResponse.deleteMany({}),
     prisma.proctoringStatus.deleteMany({}),
-    prisma.quizQuestion.deleteMany({}),
     prisma.problem.deleteMany({}),
   ]);
 
@@ -59,8 +57,9 @@ Input Format:
 Output Format:
 - Final count of students inside, or "INVALID" if any exit has no matching entry.`,
       difficulty: "Easy",
-      roundNumber: 1,
-      starterCode: `import java.util.*;
+      roundNumber: 2,
+      starterCode: {
+        java: `import java.util.*;
 
 public class EventTracker {
     public static void main(String[] args) {
@@ -68,6 +67,20 @@ public class EventTracker {
         // Your code here
     }
 }`,
+        python: `def solve():
+    # Your code here
+    pass
+
+if __name__ == '__main__':
+    solve()`,
+        "c++": `#include <iostream>
+using namespace std;
+
+int main() {
+    // Your code here
+    return 0;
+}`
+      },
       timeLimit: 900,
       testCases: {
         create: [
@@ -93,8 +106,9 @@ Input Format:
 Output Format:
 - Maximum tasks completed.`,
       difficulty: "Medium",
-      roundNumber: 1,
-      starterCode: `import java.util.*;
+      roundNumber: 2,
+      starterCode: {
+        java: `import java.util.*;
 
 public class PortfolioManager {
     public static void main(String[] args) {
@@ -102,6 +116,20 @@ public class PortfolioManager {
         // Your code here
     }
 }`,
+        python: `def solve():
+    # Your code here
+    pass
+
+if __name__ == '__main__':
+    solve()`,
+        "c++": `#include <iostream>
+using namespace std;
+
+int main() {
+    // Your code here
+    return 0;
+}`
+      },
       timeLimit: 900,
       testCases: {
         create: [
@@ -127,8 +155,9 @@ Input Format:
 Output Format:
 - Total number of blocked messages.`,
       difficulty: "Medium",
-      roundNumber: 1,
-      starterCode: `import java.util.*;
+      roundNumber: 2,
+      starterCode: {
+        java: `import java.util.*;
 
 public class SpamFilter {
     public static void main(String[] args) {
@@ -136,6 +165,20 @@ public class SpamFilter {
         // Your code here
     }
 }`,
+        python: `def solve():
+    # Your code here
+    pass
+
+if __name__ == '__main__':
+    solve()`,
+        "c++": `#include <iostream>
+using namespace std;
+
+int main() {
+    // Your code here
+    return 0;
+}`
+      },
       timeLimit: 900,
       testCases: {
         create: [
@@ -159,8 +202,9 @@ Input Format:
 Output Format:
 - Length of the longest valid contiguous segment.`,
       difficulty: "Medium",
-      roundNumber: 1,
-      starterCode: `import java.util.*;
+      roundNumber: 2,
+      starterCode: {
+        java: `import java.util.*;
 
 public class SessionAnalyzer {
     public static void main(String[] args) {
@@ -168,6 +212,20 @@ public class SessionAnalyzer {
         // Your code here
     }
 }`,
+        python: `def solve():
+    # Your code here
+    pass
+
+if __name__ == '__main__':
+    solve()`,
+        "c++": `#include <iostream>
+using namespace std;
+
+int main() {
+    // Your code here
+    return 0;
+}`
+      },
       timeLimit: 900,
       testCases: {
         create: [
@@ -191,8 +249,9 @@ Input Format:
 Output Format:
 - Maximum total reward.`,
       difficulty: "Medium",
-      roundNumber: 1,
-      starterCode: `import java.util.*;
+      roundNumber: 2,
+      starterCode: {
+        java: `import java.util.*;
 
 public class BurstScheduler {
     public static void main(String[] args) {
@@ -200,6 +259,20 @@ public class BurstScheduler {
         // Your code here
     }
 }`,
+        python: `def solve():
+    # Your code here
+    pass
+
+if __name__ == '__main__':
+    solve()`,
+        "c++": `#include <iostream>
+using namespace std;
+
+int main() {
+    // Your code here
+    return 0;
+}`
+      },
       timeLimit: 900,
       testCases: {
         create: [
@@ -213,165 +286,237 @@ public class BurstScheduler {
 
   // ── Round 2: Debugging MCQ Questions ──
 
-  // Debugging Q1: Inheritance, Constructor Chaining
-  await prisma.quizQuestion.create({
+  // ── Round 2: Debugging Sniper ──
+
+  const r2p1 = await prisma.problem.create({
     data: {
-      questionText: "What is the primary reason the Employee constructor does not correctly assign values?",
-      codeSnippet: `class Employee {
-    protected String name;
-    protected double salary
+      title: "Inheritance & Constructor Chaining",
+      description: `The following program models Employees and Managers in a company.
+Managers receive a bonus added to their salary. The program should display the correct salary for both employees.
+However, the code contains several syntax and logical errors. Debug and fix it.`,
+      difficulty: "Medium",
+      roundNumber: 1,
+      starterCode: {
+        java: `class Employee {
+
+    protected String name
+    protected double salary;
+
     Employee(String name, double salary){
         name = name;
         salary = salary;
     }
+
     public void displayInfo(){
-        System.out.println("Employee Name: " + name);
+        System.out.println("Employee Name: " + name)
         System.out.println("Salary: " + salary);
     }
-}`,
-      options: [
-        "Missing semicolon after 'salary' declaration",
-        "Parameters shadow instance variables — should use 'this.name' and 'this.salary'",
-        "The constructor should be public",
-        "displayInfo() should be static"
-      ],
-      correctIndex: 1,
-      timeLimit: 45,
-      points: 100,
-      roundNumber: 2,
-    },
-  });
 
-  await prisma.quizQuestion.create({
-    data: {
-      questionText: "What error exists in the Manager class?",
-      codeSnippet: `class Manager extends Employee {
-    private double bonus;
-    Manager(String name, double salary, double bonus){
-        this.bonus = bonus;
-    }
     public double calculateSalary(){
-        return salary + bonus
-    }
-}`,
-      options: [
-        "The bonus field should be public",
-        "Missing super(name, salary) call in constructor and missing semicolon in calculateSalary()",
-        "calculateSalary() should return an int",
-        "Manager should not extend Employee"
-      ],
-      correctIndex: 1,
-      timeLimit: 45,
-      points: 100,
-      roundNumber: 2,
-    },
-  });
-
-  // Debugging Q2: Abstraction, Polymorphism
-  await prisma.quizQuestion.create({
-    data: {
-      questionText: "What is wrong with the pay() method in the Customer class?",
-      codeSnippet: `class Customer extends User implements Payment {
-    double walletBalance;
-    Customer(String name, double balance){
-        super(name);
-        walletBalance = balance
-    }
-    public void pay(double amount){
-        if(walletBalance > amount)
-            walletBalance = walletBalance - amount;
-            System.out.println("Payment Successful");
-        else
-            System.out.println("Insufficient Balance");
-    }
-}`,
-      options: [
-        "walletBalance should be private",
-        "Missing curly braces around the if-else body — 'Payment Successful' always prints",
-        "The method should return a boolean",
-        "amount should be an int"
-      ],
-      correctIndex: 1,
-      timeLimit: 45,
-      points: 100,
-      roundNumber: 2,
-    },
-  });
-
-  await prisma.quizQuestion.create({
-    data: {
-      questionText: "Spot the error: why won't displayUser() compile correctly?",
-      codeSnippet: `class Customer extends User implements Payment {
-    // ...
-    public void displayuser(){
-        System.out.println("Customer: " + name);
+        return salary
     }
 }
-// Called as: c.displayUser();`,
-      options: [
-        "name should be accessed with getter",
-        "displayuser() has wrong casing — should be displayUser() to match the abstract method",
-        "The method needs @Override annotation",
-        "println should use printf instead"
-      ],
-      correctIndex: 1,
-      timeLimit: 30,
-      points: 100,
-      roundNumber: 2,
+
+class Manager extends Employee {
+
+    private double bonus;
+
+    Manager(String name, double salary, double bonus){
+
+        this.bonus = bonus;
+
+    }
+
+    public double calculateSalary(){
+
+        return salary + bonus
+
+    }
+
+    public void displayinfo(){
+
+        System.out.println("Manager Name: " + name);
+        System.out.println("Total Salary: " + calculateSalary());
+    }
+}
+
+public class Company {
+
+    public static void main(String args) {
+
+        Employee e1 = new Employee("Rahul", 50000)
+
+        Manager m1 = new Manager("Priya", 70000, 10000);
+
+        e1.displayInfo();
+
+        m1.displayInfo();
+
+    }
+}`
+      },
+      timeLimit: 900,
+      testCases: {
+        create: [
+          { input: "", expected: `Employee Name: Rahul
+Salary: 50000.0
+Manager Name: Priya
+Total Salary: 80000.0`, isHidden: false },
+        ],
+      },
     },
   });
 
-  // Debugging Q3: Static vs Instance, Encapsulation
-  await prisma.quizQuestion.create({
+  const r2p2 = await prisma.problem.create({
     data: {
-      questionText: "What is wrong with the issueBook() method?",
-      codeSnippet: `class Library {
+      title: "Abstraction, Polymorphism & Interfaces",
+      description: `The program models a payment system where users can pay using Credit Card or PayPal.
+However, the code contains syntax mistakes, incorrect overrides, and logical issues. Fix it so payments process correctly.`,
+      difficulty: "Medium",
+      roundNumber: 1,
+      starterCode: {
+        java: `public class PaymentSystem {
+
+    public static void main(String args[]) {
+
+        Payment p;
+
+        Customer c = new Customer("Arjun", 2000);
+
+        p = c;
+
+        c.displayUser();
+
+        p.pay(500);
+
+        System.out.println("Remaining Balance: " + c.walletBalance);
+
+    }
+
+}
+
+
+interface Payment {
+
+    void pay(double amount)   // BUG 1 (missing ;)
+
+}
+
+abstract class User {
+
+    String name;
+
+    User(String name) {
+        name = name;   // BUG 2 (logical error)
+    }
+
+    abstract void displayUser();
+
+}
+
+class Customer extends User implements Payment {
+
+    double walletBalance;
+
+    Customer(String name, double balance) {
+        super(name);
+        walletBalance = balance;
+    }
+
+    public void pay(double amount) {
+
+        if (walletBalance < amount) {   // BUG 3 (logic error)
+            walletBalance = walletBalance - amount;
+            System.out.println("Payment Successful");
+        } else {
+            System.out.println("Insufficient Balance");
+        }
+
+    }
+
+    public void displayUser() {
+        System.out.println("Customer: " + name);
+    }
+
+}`
+      },
+      timeLimit: 900,
+      testCases: {
+        create: [
+          { input: "", expected: `Customer: Arjun
+Payment Successful
+Remaining Balance: 1500.0`, isHidden: false },
+        ],
+      },
+    },
+  });
+
+  const r2p3 = await prisma.problem.create({
+    data: {
+      title: "Method Overloading & Static vs Instance",
+      description: `The program models a Library system that tracks the number of books issued.
+However, several logical and syntax errors prevent correct behavior. Fix the program.`,
+      difficulty: "Medium",
+      roundNumber: 1,
+      starterCode: {
+        java: `class Library {
+
     private String bookName;
     private int issuedBooks;
+
     static int totalIssued;
 
-    public void issueBook(){
+    Library(String name) {
+        bookName = name;
+        issuedBooks = 0
+    }
+
+    public void issueBook() {
+
         issuedBooks++;
         totalIssued + 1;
-    }
-    public void issueBook(int quantity){
-        issuedBooks = issuedBooks + quantity;
-        totalIssued = totalIssued + quantity
-    }
-}`,
-      options: [
-        "issuedBooks should be static",
-        "'totalIssued + 1' is an expression, not assignment — should be 'totalIssued++' or 'totalIssued += 1'",
-        "issueBook() cannot be overloaded",
-        "bookName is never used so it causes an error"
-      ],
-      correctIndex: 1,
-      timeLimit: 45,
-      points: 100,
-      roundNumber: 2,
-    },
-  });
 
-  await prisma.quizQuestion.create({
-    data: {
-      questionText: "Why does getIssuedBooks() fail to compile?",
-      codeSnippet: `class Library {
-    private int issuedBooks;
-    // ...
-    public int getIssuedBooks(){
+    }
+
+    public void issueBook(int quantity) {
+
+        issuedBooks = issuedBooks + quantity
+        totalIssued = totalIssued + quantity;
+
+    }
+
+    public int getIssuedBooks() {
         return issuedbooks;
     }
-}`,
-      options: [
-        "The method should return a String",
-        "Variable name mismatch: 'issuedbooks' should be 'issuedBooks' (Java is case-sensitive)",
-        "The return type is wrong",
-        "Private fields cannot have getters"
-      ],
-      correctIndex: 1,
-      timeLimit: 30,
-      points: 100,
-      roundNumber: 2,
+
+
+    public static void main(String args[]) {
+
+        Library l1 = new Library("Java Programming");
+
+        Library l2 = new Library("Operating Systems");
+
+        l1.issueBook();
+
+        l1.issueBook(2);
+
+        l2.issueBook(3)
+
+        System.out.println("Books issued from l1: " + l1.getIssuedBooks());
+
+        System.out.println("Total books issued: " + totalIssued);
+
+    }
+
+}`
+      },
+      timeLimit: 900,
+      testCases: {
+        create: [
+          { input: "", expected: `Books issued from l1: 3
+Total books issued: 6`, isHidden: false },
+        ],
+      },
     },
   });
 
@@ -417,13 +562,13 @@ Time: You have the full round duration to build this on VS Code.`,
   });
 
   const round1Count = await prisma.problem.count({ where: { roundNumber: 1 } });
-  const round2QuizCount = await prisma.quizQuestion.count({ where: { roundNumber: 2 } });
+  const round2ProblemCount = await prisma.problem.count({ where: { roundNumber: 2 } });
   const round3Count = await prisma.problem.count({ where: { roundNumber: 3 } });
 
   console.log("Seed complete.");
   console.log("  Admin: admin@gdg.local / Admin@123");
-  console.log(`  Round 1 problems: ${round1Count} (base IDs: ${p1.id}, ${p2.id}, ${p3.id})`);
-  console.log(`  Round 2 quiz questions: ${round2QuizCount}`);
+  console.log(`  Round 1 debugging problems: ${round1Count}`);
+  console.log(`  Round 2 DSA problems: ${round2ProblemCount} (base IDs: ${p1.id}, ${p2.id}, ${p3.id})`);
   console.log(`  Round 3 MVP problems: ${round3Count}`);
 }
 

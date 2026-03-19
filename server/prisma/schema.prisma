@@ -47,11 +47,12 @@ model User {
   bits          Int          @default(0)
   eliminatedAt  DateTime?
   submissions   Submission[]
-  quizResponses QuizResponse[]
+
   matchupsAsUser1 Matchup[]  @relation("MatchUser1")
   matchupsAsUser2 Matchup[]  @relation("MatchUser2")
   wonMatchups     Matchup[]  @relation("MatchWinner")
   proctoringStatuses ProctoringStatus[]
+
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
@@ -69,7 +70,7 @@ model Problem {
   description String
   difficulty  String
   roundNumber Int
-  starterCode String       @default("")
+  starterCode Json?
   timeLimit   Int          @default(900)
   testCases   TestCase[]
   matchups    Matchup[]
@@ -88,19 +89,20 @@ model TestCase {
 }
 
 model Matchup {
-  id         String        @id @default(cuid())
-  roundNumber Int
-  user1Id    String
-  user2Id    String
-  problemId  String
-  winnerId   String?
-  status     MatchupStatus @default(PENDING)
-  startedAt  DateTime?
-  endedAt    DateTime?
-  user1      User          @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
-  user2      User          @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
-  winner     User?         @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: SetNull)
-  problem    Problem       @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  id              String        @id @default(cuid())
+  roundNumber     Int
+  user1Id         String
+  user2Id         String
+  problemId       String
+  winnerId        String?
+  status          MatchupStatus @default(PENDING)
+  startedAt       DateTime?
+  endedAt         DateTime?
+  timerExtension  Int           @default(0)
+  user1           User          @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2           User          @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  winner          User?         @relation("MatchWinner", fields: [winnerId], references: [id], onDelete: SetNull)
+  problem         Problem       @relation(fields: [problemId], references: [id], onDelete: Cascade)
 }
 
 model Submission {
@@ -118,31 +120,7 @@ model Submission {
   problem       Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
 }
 
-model QuizQuestion {
-  id           String   @id @default(cuid())
-  questionText String
-  codeSnippet  String   @default("")
-  options      Json
-  correctIndex Int
-  timeLimit    Int      @default(30)
-  points       Int      @default(100)
-  roundNumber  Int      @default(2)
-  responses    QuizResponse[]
-  createdAt    DateTime @default(now())
-}
 
-model QuizResponse {
-  id           String   @id @default(cuid())
-  userId       String
-  questionId   String
-  selectedIndex Int
-  isCorrect    Boolean
-  responseTime Int
-  pointsEarned Int
-  createdAt    DateTime @default(now())
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  question     QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
-}
 
 model ProctoringStatus {
   id             String   @id @default(cuid())
@@ -158,10 +136,4 @@ model ProctoringStatus {
   @@unique([userId, roundNumber])
 }
 
-model ChatMessage {
-  id        String   @id @default(cuid())
-  userId    String
-  message   String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+

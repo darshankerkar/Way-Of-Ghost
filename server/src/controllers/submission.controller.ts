@@ -126,6 +126,82 @@ export async function submitCode(req: Request, res: Response) {
   }
 }
 
+export async function handleTimeout(req: Request, res: Response) {
+  try {
+    const { matchupId } = req.body as { matchupId: string };
+    const userId = req.auth!.userId;
+
+    const matchup = await prisma.matchup.findUnique({
+      where: { id: matchupId },
+      include: {
+        user1: true,
+        user2: true,
+      }
+    });
+
+    if (!matchup) {
+      return res.status(404).json({ message: "Matchup not found." });
+    }
+
+    // Determine round duration
+    const ROUND_DURATIONS: Record<number, number> = {
+      1: 15 * 60,
+      2: 30 * 60,
+    };
+
+    const baseDuration = ROUND_DURATIONS[matchup.roundNumber];
+    if (!baseDuration) {
+      return res.status(400).json({ message: "This round does not support timeout elimination." });
+    }
+
+    if (!matchup.startedAt) {
+      return res.status(400).json({ message: "Matchup not started." });
+    }
+
+    const totalSeconds = baseDuration + (matchup.timerExtension || 0);
+    // Add 10 seconds grace period for network latency and sync
+    const expiresAt = new Date(matchup.startedAt.getTime() + (totalSeconds * 1000) + 10000);
+
+    if (Date.now() < expiresAt.getTime()) {
+      return res.status(400).json({ message: "Time is not up yet." });
+    }
+
+    // Eliminate user
+    await prisma.user.update({
+      where: { id: userId },
+      data: { eliminatedAt: new Date() },
+    });
+
+    // Check if opponent is already eliminated. Check the latest state from DB (or use loaded relation if sufficient, but safer to re-query or check loaded object)
+    // The matchup object has user1 and user2 loaded. However, their status might have changed since loading if concurrent request.
+    const opponentId = matchup.user1Id === userId ? matchup.user2Id : matchup.user1Id;
+    const opponent = await prisma.user.findUnique({ where: { id: opponentId } });
+
+    if (opponent && opponent.eliminatedAt) {
+      await prisma.matchup.update({
+        where: { id: matchupId },
+        data: {
+          status: MatchupStatus.COMPLETED,
+          winnerId: null,
+          endedAt: new Date(),
+        },
+      });
+      // Notify clients that matchup is over
+      const io = getIO();
+      io.to(`matchup:${matchupId}`).emit("matchup:result", {
+        matchupId,
+        winnerId: null,
+        loserId: null, // Both lost
+      });
+    }
+
+    return res.json({ message: "User eliminated due to timeout." });
+
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+}
+
 export async function getMatchupSubmissions(req: Request, res: Response) {
   const matchupId = String(req.params.matchupId);
   const matchup = await prisma.matchup.findUnique({

@@ -6,6 +6,7 @@ import {
   listProctoringStatuses,
   listPendingUsers,
   updateUserApproval,
+  adminExtendTimer,
 } from "../controllers/admin.controller.js";
 import { requireAdmin, requireAuth } from "../middleware/auth.js";
 
@@ -18,3 +19,4 @@ adminRouter.post("/start-round", adminStartRound);
 adminRouter.post("/reset-round", adminResetRound);
 adminRouter.get("/proctoring/statuses", listProctoringStatuses);
 adminRouter.post("/proctoring/unblock", adminUnblockParticipant);
+adminRouter.post("/extend-timer", adminExtendTimer);

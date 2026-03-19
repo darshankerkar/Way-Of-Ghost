@@ -60,6 +60,22 @@ function IconChevron() {
 const rounds = [
   {
     number: 1,
+    name: "Shrine Of Wisdom",
+    subtitle: "Debugging Compiler Sprint",
+    icon: <IconBrain />,
+    accentColor: "rgba(59,130,246,.18)",
+    borderColor: "rgba(59,130,246,.28)",
+    dotColor: "#3b82f6",
+    desc: "Put your Java debugging skills to the ultimate test. Code snippets with subtle bugs are presented — identify and fix them in a live compiler faster than your opponent. This round tests your deep understanding of language semantics, runtime behaviour, and common developer pitfalls under time pressure.",
+    rules: [
+      "Java-based debugging questions in a live compiler",
+      "Time-pressured rapid-fire bug fixing",
+      "Each correct submission earns Bits currency",
+      "Highest total Bits advances to Round 2",
+    ],
+  },
+  {
+    number: 2,
     name: "Shadow Tactics",
     subtitle: "1v1 Coding Duel",
     icon: <IconSword />,
@@ -72,22 +88,6 @@ const rounds = [
       "First correct submission wins the duel",
       "Eliminated contestants exit the bracket",
       "Round continues until a semifinal pool remains",
-    ],
-  },
-  {
-    number: 2,
-    name: "Shrine Of Wisdom",
-    subtitle: "Debugging MCQ Sprint",
-    icon: <IconBrain />,
-    accentColor: "rgba(59,130,246,.18)",
-    borderColor: "rgba(59,130,246,.28)",
-    dotColor: "#3b82f6",
-    desc: "Put your Java debugging skills to the ultimate test. Code snippets with subtle bugs are presented — identify and fix them faster than your opponent. This round tests your deep understanding of language semantics, runtime behaviour, and common developer pitfalls under time pressure.",
-    rules: [
-      "Java-based debugging questions in MCQ format",
-      "Time-pressured rapid-fire questions",
-      "Each correct answer earns Bits currency",
-      "Highest total Bits advances to Round 3",
     ],
   },
   {
