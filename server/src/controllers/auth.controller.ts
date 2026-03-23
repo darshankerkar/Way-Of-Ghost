@@ -4,15 +4,15 @@ import { prisma } from "../config/prisma.js";
 import { loginUser, registerUser } from "../services/auth.service.js";
 
 const registerSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(6),
-  college: z.string().min(2),
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Invalid email address."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
+  college: z.string().min(2, "College name must be at least 2 characters."),
 });
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email("Invalid email address."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
 });
 
 export async function register(req: Request, res: Response) {
@@ -24,6 +24,9 @@ export async function register(req: Request, res: Response) {
       user,
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: error.issues[0].message });
+    }
     return res.status(400).json({ message: (error as Error).message });
   }
 }
@@ -34,6 +37,9 @@ export async function login(req: Request, res: Response) {
     const data = await loginUser(body.email, body.password);
     return res.json(data);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: error.issues[0].message });
+    }
     return res.status(400).json({ message: (error as Error).message });
   }
 }

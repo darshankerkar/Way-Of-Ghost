@@ -11,8 +11,8 @@ export async function getRoundMatchups(req: Request, res: Response) {
   const matchups = await prisma.matchup.findMany({
     where: { roundNumber },
     include: {
-      user1: { select: { id: true, name: true } },
-      user2: { select: { id: true, name: true } },
+      user1: { select: { id: true, name: true, eliminatedAt: true } },
+      user2: { select: { id: true, name: true, eliminatedAt: true } },
       winner: { select: { id: true, name: true } },
       problem: { select: { id: true, title: true, difficulty: true, timeLimit: true } },
     },

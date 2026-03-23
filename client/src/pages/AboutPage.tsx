@@ -4,7 +4,16 @@ import { GdgLogo } from "./LandingPage";
 /* ─── SVG Icons ──────────────────────────────────────────────────────────── */
 function IconSword() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M14.5 10.5l-9.4 9.4a2.1 2.1 0 0 1-3-3L11.5 7.5" />
       <path d="M20 4L14 10" />
       <path d="M20 4h-4v4" />
@@ -13,7 +22,16 @@ function IconSword() {
 }
 function IconBrain() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .5 6.199A4 4 0 1 0 12 18Z" />
       <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.5 6.199A4 4 0 1 1 12 18Z" />
       <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" />
@@ -28,7 +46,16 @@ function IconBrain() {
 }
 function IconTrophy() {
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
       <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
       <path d="M4 22h16" />
@@ -40,7 +67,16 @@ function IconTrophy() {
 }
 function IconCoins() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="8" cy="8" r="6" />
       <path d="M18.09 10.37A6 6 0 1 1 10.34 18" />
       <path d="M7 6h1v4" />
@@ -50,7 +86,16 @@ function IconCoins() {
 }
 function IconChevron() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="m9 18 6-6-6-6" />
     </svg>
   );
@@ -60,6 +105,22 @@ function IconChevron() {
 const rounds = [
   {
     number: 1,
+    name: "Shrine Of Wisdom",
+    subtitle: "Debugging Compiler Sprint",
+    icon: <IconBrain />,
+    accentColor: "rgba(59,130,246,.18)",
+    borderColor: "rgba(59,130,246,.28)",
+    dotColor: "#3b82f6",
+    desc: "Put your Java debugging skills to the ultimate test. Code snippets with subtle bugs are presented — identify and fix them in a live compiler faster than your opponent. This round tests your deep understanding of language semantics, runtime behaviour, and common developer pitfalls under time pressure.",
+    rules: [
+      "Java-based debugging questions in a live compiler",
+      "Time-pressured rapid-fire bug fixing",
+      "Each correct submission earns Bits currency",
+      "Highest total Bits advances to Round 2",
+    ],
+  },
+  {
+    number: 2,
     name: "Shadow Tactics",
     subtitle: "1v1 Coding Duel",
     icon: <IconSword />,
@@ -72,22 +133,6 @@ const rounds = [
       "First correct submission wins the duel",
       "Eliminated contestants exit the bracket",
       "Round continues until a semifinal pool remains",
-    ],
-  },
-  {
-    number: 2,
-    name: "Shrine Of Wisdom",
-    subtitle: "Debugging MCQ Sprint",
-    icon: <IconBrain />,
-    accentColor: "rgba(59,130,246,.18)",
-    borderColor: "rgba(59,130,246,.28)",
-    dotColor: "#3b82f6",
-    desc: "Put your Java debugging skills to the ultimate test. Code snippets with subtle bugs are presented — identify and fix them faster than your opponent. This round tests your deep understanding of language semantics, runtime behaviour, and common developer pitfalls under time pressure.",
-    rules: [
-      "Java-based debugging questions in MCQ format",
-      "Time-pressured rapid-fire questions",
-      "Each correct answer earns Bits currency",
-      "Highest total Bits advances to Round 3",
     ],
   },
   {
@@ -113,9 +158,18 @@ export function AboutPage() {
   return (
     <div className="contest-bg min-h-screen text-white relative">
       {/* Background */}
-      <div className="absolute inset-0 contest-grid-overlay pointer-events-none" aria-hidden="true" />
-      <div className="creepy-fog absolute inset-0 pointer-events-none" aria-hidden="true" />
-      <div className="contest-radial-glow absolute -left-20 top-10 h-72 w-72 rounded-full pointer-events-none" aria-hidden="true" />
+      <div
+        className="absolute inset-0 contest-grid-overlay pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="creepy-fog absolute inset-0 pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="contest-radial-glow absolute -left-20 top-10 h-72 w-72 rounded-full pointer-events-none"
+        aria-hidden="true"
+      />
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="contest-node contest-node-a" />
         <div className="contest-node contest-node-b" />
@@ -130,7 +184,10 @@ export function AboutPage() {
             <GdgLogo />
           </Link>
           <div className="flex items-center gap-3">
-            <Link to="/register" className="contest-btn-primary rounded-lg px-5 py-2 text-sm font-semibold">
+            <Link
+              to="/register"
+              className="contest-btn-primary rounded-lg px-5 py-2 text-sm font-semibold"
+            >
               Register Now
             </Link>
           </div>
@@ -138,28 +195,38 @@ export function AboutPage() {
       </header>
 
       <main className="relative z-10 mx-auto max-w-[1200px] px-4 py-10 md:px-8">
-
         {/* ── Event Overview ── */}
         <section className="contest-glass-panel rounded-[28px] border border-white/10 p-8 md:p-12 mb-10">
           <div className="contest-badge inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs font-semibold uppercase tracking-[.2em] mb-5">
             GDG VITM Event 2026
           </div>
-          <h1 className="contest-title text-3xl md:text-5xl mb-6">Way Of Ghost</h1>
+          <h1 className="contest-title text-3xl md:text-5xl mb-6">
+            Last Standing Ronin
+          </h1>
           <p className="max-w-3xl text-[15px] leading-[1.85] text-gray-300">
-            <strong className="text-white">Way of Ghost</strong> is a high-stakes, multi-round competitive programming
-            event organised by <span className="text-ghost-gold font-semibold">Google Developer Groups VIT Mumbai</span>.
-            Designed for precision coders, it pits participants against each other in a brutal three-round elimination
-            bracket — starting with live 1v1 DSA duels, moving through a timed Java debugging sprint, and culminating in
-            a strategic resource-auction finale. Across all rounds, participants earn <span className="text-ghost-gold font-medium">Bits</span> —
-            the in-event currency that doubles as your bid power in the grand finale. Only the most adaptive and
-            algorithmically sharp contestant claims the throne.
+            <strong className="text-white">Last Standing Ronin</strong> is a
+            high-stakes, multi-round competitive programming event organised by{" "}
+            <span className="text-ghost-gold font-semibold">
+              Google Developer Groups VIT Mumbai
+            </span>
+            . Designed for precision coders, it pits participants against each
+            other in a brutal three-round elimination bracket — starting with
+            live 1v1 DSA duels, moving through a timed Java debugging sprint,
+            and culminating in a strategic resource-auction finale. Across all
+            rounds, participants earn{" "}
+            <span className="text-ghost-gold font-medium">Bits</span> — the
+            in-event currency that doubles as your bid power in the grand
+            finale. Only the most adaptive and algorithmically sharp contestant
+            claims the throne.
           </p>
         </section>
 
         {/* ── Roadmap ── */}
         <section className="mb-10">
-          <h2 className="text-lg font-bold uppercase tracking-[.14em] text-ghost-gold mb-8 text-center"
-              style={{ fontFamily: "'Orbitron', sans-serif" }}>
+          <h2
+            className="text-lg font-bold uppercase tracking-[.14em] text-ghost-gold mb-8 text-center"
+            style={{ fontFamily: "'Orbitron', sans-serif" }}
+          >
             Event Roadmap
           </h2>
 
@@ -169,23 +236,40 @@ export function AboutPage() {
             <div className="absolute top-8 left-[16.67%] right-[16.67%] h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
             {rounds.map((r, i) => (
-              <div key={r.number} className="flex flex-col items-center text-center px-6">
+              <div
+                key={r.number}
+                className="flex flex-col items-center text-center px-6"
+              >
                 {/* dot + number */}
                 <div className="relative flex flex-col items-center mb-4">
                   <div
                     className="w-16 h-16 rounded-full flex items-center justify-center border-2 mb-3 relative z-10"
-                    style={{ background: r.accentColor, borderColor: r.borderColor, color: r.dotColor }}
+                    style={{
+                      background: r.accentColor,
+                      borderColor: r.borderColor,
+                      color: r.dotColor,
+                    }}
                   >
                     {r.icon}
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-[.15em] text-gray-500">Round {r.number}</span>
+                  <span className="text-xs font-bold uppercase tracking-[.15em] text-gray-500">
+                    Round {r.number}
+                  </span>
                 </div>
-                <h3 className="text-base font-bold text-white mb-1" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                <h3
+                  className="text-base font-bold text-white mb-1"
+                  style={{ fontFamily: "'Orbitron', sans-serif" }}
+                >
                   {r.name}
                 </h3>
                 <p className="text-xs text-ghost-gold">{r.subtitle}</p>
                 {i < rounds.length - 1 && (
-                  <div className="absolute top-8 mt-0" style={{ right: `calc(${(rounds.length - 1 - i) / rounds.length * 100}% - 8px)` }}>
+                  <div
+                    className="absolute top-8 mt-0"
+                    style={{
+                      right: `calc(${((rounds.length - 1 - i) / rounds.length) * 100}% - 8px)`,
+                    }}
+                  >
                     <IconChevron />
                   </div>
                 )}
@@ -197,16 +281,30 @@ export function AboutPage() {
           <div className="md:hidden flex flex-col gap-0 pl-8 relative">
             <div className="absolute left-[28px] top-4 bottom-4 w-px bg-white/10" />
             {rounds.map((r) => (
-              <div key={r.number} className="relative flex items-start gap-5 pb-8 last:pb-0">
+              <div
+                key={r.number}
+                className="relative flex items-start gap-5 pb-8 last:pb-0"
+              >
                 <div
                   className="w-12 h-12 rounded-full flex items-center justify-center border shrink-0 -translate-x-[22px] mt-1"
-                  style={{ background: r.accentColor, borderColor: r.borderColor, color: r.dotColor }}
+                  style={{
+                    background: r.accentColor,
+                    borderColor: r.borderColor,
+                    color: r.dotColor,
+                  }}
                 >
                   {r.icon}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase tracking-[.12em] mb-0.5">Round {r.number}</p>
-                  <h3 className="text-sm font-bold text-white" style={{ fontFamily: "'Orbitron', sans-serif" }}>{r.name}</h3>
+                  <p className="text-xs text-gray-500 uppercase tracking-[.12em] mb-0.5">
+                    Round {r.number}
+                  </p>
+                  <h3
+                    className="text-sm font-bold text-white"
+                    style={{ fontFamily: "'Orbitron', sans-serif" }}
+                  >
+                    {r.name}
+                  </h3>
                   <p className="text-xs text-ghost-gold">{r.subtitle}</p>
                 </div>
               </div>
@@ -216,8 +314,10 @@ export function AboutPage() {
 
         {/* ── Round Detail Cards ── */}
         <section>
-          <h2 className="text-lg font-bold uppercase tracking-[.14em] text-ghost-gold mb-6 text-center"
-              style={{ fontFamily: "'Orbitron', sans-serif" }}>
+          <h2
+            className="text-lg font-bold uppercase tracking-[.14em] text-ghost-gold mb-6 text-center"
+            style={{ fontFamily: "'Orbitron', sans-serif" }}
+          >
             Round Details
           </h2>
           <div className="space-y-5">
@@ -225,35 +325,59 @@ export function AboutPage() {
               <div
                 key={r.number}
                 className="about-round-card rounded-2xl p-6 md:p-8 border"
-                style={{ borderColor: r.borderColor, background: `linear-gradient(135deg, ${r.accentColor}, transparent)` }}
+                style={{
+                  borderColor: r.borderColor,
+                  background: `linear-gradient(135deg, ${r.accentColor}, transparent)`,
+                }}
               >
                 <div className="flex flex-wrap items-start gap-6">
                   {/* Icon badge */}
                   <div
                     className="w-14 h-14 rounded-xl flex flex-col items-center justify-center border shrink-0"
-                    style={{ background: r.accentColor, borderColor: r.borderColor, color: r.dotColor }}
+                    style={{
+                      background: r.accentColor,
+                      borderColor: r.borderColor,
+                      color: r.dotColor,
+                    }}
                   >
                     {r.icon}
-                    <span className="text-[9px] font-bold uppercase tracking-widest mt-1 opacity-60">R{r.number}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest mt-1 opacity-60">
+                      R{r.number}
+                    </span>
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-3 mb-3">
-                      <h3 className="text-lg font-bold text-white" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                      <h3
+                        className="text-lg font-bold text-white"
+                        style={{ fontFamily: "'Orbitron', sans-serif" }}
+                      >
                         {r.name}
                       </h3>
                       <span
                         className="text-xs font-semibold rounded-full px-3 py-1 border"
-                        style={{ color: r.dotColor, background: r.accentColor, borderColor: r.borderColor }}
+                        style={{
+                          color: r.dotColor,
+                          background: r.accentColor,
+                          borderColor: r.borderColor,
+                        }}
                       >
                         {r.subtitle}
                       </span>
                     </div>
-                    <p className="text-[14px] text-gray-300 leading-[1.8] mb-5">{r.desc}</p>
+                    <p className="text-[14px] text-gray-300 leading-[1.8] mb-5">
+                      {r.desc}
+                    </p>
                     <ul className="grid sm:grid-cols-2 gap-2">
                       {r.rules.map((rule, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-gray-400">
-                          <span style={{ color: r.dotColor }} className="mt-0.5 shrink-0">
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 text-xs text-gray-400"
+                        >
+                          <span
+                            style={{ color: r.dotColor }}
+                            className="mt-0.5 shrink-0"
+                          >
                             <IconChevron />
                           </span>
                           {rule}
@@ -270,24 +394,32 @@ export function AboutPage() {
         {/* ── Bits Economy ── */}
         <div className="mt-8 contest-info-card rounded-2xl p-6 md:p-8">
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-ghost-gold"><IconCoins /></span>
-            <h3 className="text-sm font-bold text-ghost-gold uppercase tracking-[.1em]"
-                style={{ fontFamily: "'Orbitron', sans-serif" }}>
+            <span className="text-ghost-gold">
+              <IconCoins />
+            </span>
+            <h3
+              className="text-sm font-bold text-ghost-gold uppercase tracking-[.1em]"
+              style={{ fontFamily: "'Orbitron', sans-serif" }}
+            >
               Bits — The Currency of the Arena
             </h3>
           </div>
           <p className="text-[14px] text-gray-300 leading-[1.8]">
-            Bits are the scoring and bidding currency used throughout the event. Correct submissions, quiz answers,
-            and round victories earn Bits. In Round 3 (Khan's Ultimatum), your accumulated Bits power your auction bids —
-            so every point earned earlier directly fuels your final shot at the throne. The global leaderboard tracks
-            Bits in real time for the duration of the event.
+            Bits are the scoring and bidding currency used throughout the event.
+            Correct submissions, quiz answers, and round victories earn Bits. In
+            Round 3 (Khan's Ultimatum), your accumulated Bits power your auction
+            bids — so every point earned earlier directly fuels your final shot
+            at the throne. The global leaderboard tracks Bits in real time for
+            the duration of the event.
           </p>
         </div>
 
         {/* ── Eligibility + Stack ── */}
         <div className="mt-5 grid sm:grid-cols-2 gap-5">
           <div className="contest-info-card rounded-2xl p-6">
-            <h3 className="text-xs font-bold text-ghost-gold mb-4 uppercase tracking-widest">Who Can Participate</h3>
+            <h3 className="text-xs font-bold text-ghost-gold mb-4 uppercase tracking-widest">
+              Who Can Participate
+            </h3>
             <ul className="space-y-2 text-[14px] text-gray-300">
               {[
                 "Students of VIT Mumbai",
@@ -296,14 +428,18 @@ export function AboutPage() {
                 "Registration subject to admin approval",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2">
-                  <span className="text-ghost-gold mt-0.5 shrink-0"><IconChevron /></span>
+                  <span className="text-ghost-gold mt-0.5 shrink-0">
+                    <IconChevron />
+                  </span>
                   {item}
                 </li>
               ))}
             </ul>
           </div>
           <div className="contest-info-card rounded-2xl p-6">
-            <h3 className="text-xs font-bold text-ghost-gold mb-4 uppercase tracking-widest">Platform Stack</h3>
+            <h3 className="text-xs font-bold text-ghost-gold mb-4 uppercase tracking-widest">
+              Platform Stack
+            </h3>
             <ul className="space-y-2 text-[14px] text-gray-300">
               {[
                 "React + Vite + TypeScript frontend",
@@ -312,7 +448,9 @@ export function AboutPage() {
                 "Piston API for live code execution",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2">
-                  <span className="text-ghost-gold mt-0.5 shrink-0"><IconChevron /></span>
+                  <span className="text-ghost-gold mt-0.5 shrink-0">
+                    <IconChevron />
+                  </span>
                   {item}
                 </li>
               ))}
@@ -321,13 +459,19 @@ export function AboutPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link className="contest-btn-primary rounded-xl px-8 py-3.5 font-bold text-base" to="/register">
+          <Link
+            className="contest-btn-primary rounded-xl px-8 py-3.5 font-bold text-base"
+            to="/register"
+          >
             Register &amp; Begin Your Journey →
           </Link>
         </div>
       </main>
 
-      <div className="contest-bottom-line pointer-events-none absolute bottom-6 left-1/2 h-px w-4/5 -translate-x-1/2" aria-hidden="true" />
+      <div
+        className="contest-bottom-line pointer-events-none absolute bottom-6 left-1/2 h-px w-4/5 -translate-x-1/2"
+        aria-hidden="true"
+      />
     </div>
   );
 }

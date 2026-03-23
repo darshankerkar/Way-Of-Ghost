@@ -1,6 +1,6 @@
 import { prisma } from "../config/prisma.js";
 export async function createProblem(req, res) {
-    const { title, description, difficulty, roundNumber, starterCode, timeLimit, testCases } = req.body;
+    const { title, description, difficulty, roundNumber, starterCode, timeLimit, testCases, hint } = req.body;
     const problem = await prisma.problem.create({
         data: {
             title,
@@ -9,6 +9,7 @@ export async function createProblem(req, res) {
             roundNumber,
             starterCode,
             timeLimit,
+            hint,
             testCases: {
                 create: (testCases ?? []).map((item) => ({
                     input: item.input,

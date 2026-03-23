@@ -17,6 +17,7 @@ export type Problem = {
   description: string;
   difficulty: string;
   roundNumber: number;
+  hint?: string;
   starterCode: string;
   timeLimit: number;
   testCases?: TestCase[];
@@ -32,13 +33,14 @@ export type TestCase = {
 export type Matchup = {
   id: string;
   roundNumber: number;
-  user1: { id: string; name: string };
-  user2: { id: string; name: string };
+  user1: { id: string; name: string; eliminatedAt: string | null };
+  user2: { id: string; name: string; eliminatedAt: string | null };
   winner?: { id: string; name: string } | null;
   problem: { id: string; title: string; difficulty: string; timeLimit: number };
   status: MatchupStatus;
   startedAt: string | null;
   endedAt: string | null;
+  timerExtension: number;
 };
 
 export type EventState = {

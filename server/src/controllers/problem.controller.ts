@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../config/prisma.js";
 
 export async function createProblem(req: Request, res: Response) {
-  const { title, description, difficulty, roundNumber, starterCode, timeLimit, testCases } =
+  const { title, description, difficulty, roundNumber, starterCode, timeLimit, testCases, hint } =
     req.body as {
       title: string;
       description: string;
@@ -11,6 +11,7 @@ export async function createProblem(req: Request, res: Response) {
       starterCode: string;
       timeLimit: number;
       testCases: { input: string; expected: string; isHidden?: boolean }[];
+      hint?: string;
     };
 
   const problem = await prisma.problem.create({
@@ -21,6 +22,7 @@ export async function createProblem(req: Request, res: Response) {
       roundNumber,
       starterCode,
       timeLimit,
+      hint,
       testCases: {
         create: (testCases ?? []).map((item) => ({
           input: item.input,

@@ -8,8 +8,8 @@ export async function getRoundMatchups(req, res) {
     const matchups = await prisma.matchup.findMany({
         where: { roundNumber },
         include: {
-            user1: { select: { id: true, name: true } },
-            user2: { select: { id: true, name: true } },
+            user1: { select: { id: true, name: true, eliminatedAt: true } },
+            user2: { select: { id: true, name: true, eliminatedAt: true } },
             winner: { select: { id: true, name: true } },
             problem: { select: { id: true, title: true, difficulty: true, timeLimit: true } },
         },
@@ -52,4 +52,31 @@ export async function getRoundProblems(req, res) {
         orderBy: { createdAt: "asc" },
     });
     return res.json(problems);
+}
+export async function getMyProctoringStatus(req, res) {
+    const roundNumber = Number(req.params.roundNumber);
+    if (![1, 2, 3].includes(roundNumber)) {
+        return res.status(400).json({ message: "Invalid round number." });
+    }
+    const userId = req.auth?.userId;
+    if (!userId) {
+        return res.status(401).json({ message: "Unauthorized." });
+    }
+    const status = await prisma.proctoringStatus.findUnique({
+        where: { userId_roundNumber: { userId, roundNumber } },
+        select: {
+            roundNumber: true,
+            fullscreen: true,
+            tabSwitchCount: true,
+            warned: true,
+            banned: true,
+        },
+    });
+    return res.json(status ?? {
+        roundNumber,
+        fullscreen: false,
+        tabSwitchCount: 0,
+        warned: false,
+        banned: false,
+    });
 }

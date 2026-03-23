@@ -20,14 +20,26 @@ export async function runAgainstProblem(problemId, language, code) {
                 source: code,
                 stdin: testCase.input,
             });
-            const stdout = (result.run.stdout ?? "").trim();
-            const stderr = (result.run.stderr ?? "").trim();
-            // If there's a runtime error, the test fails
-            if (result.run.code !== 0 && stderr) {
+            const compileStdErr = (result.compile?.stderr ?? "").trim();
+            const compileStdOut = (result.compile?.stdout ?? "").trim();
+            if (result.compile && result.compile.code !== 0) {
                 details.push({
                     input: testCase.input,
                     expected: testCase.expected.trim(),
-                    got: stderr,
+                    got: compileStdErr || compileStdOut || "Compilation failed",
+                    pass: false,
+                    isHidden: testCase.isHidden,
+                });
+                continue;
+            }
+            const stdout = (result.run.stdout ?? "").trim();
+            const stderr = (result.run.stderr ?? "").trim();
+            // If there's a runtime error, the test fails
+            if (result.run.code !== 0) {
+                details.push({
+                    input: testCase.input,
+                    expected: testCase.expected.trim(),
+                    got: stderr || stdout || "Runtime error",
                     pass: false,
                     isHidden: testCase.isHidden,
                 });

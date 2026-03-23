@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "postbuild": "node -e \"require('node:fs').copyFileSync('ecosystem.config.cjs','dist/ecosystem.config.cjs')\"",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",

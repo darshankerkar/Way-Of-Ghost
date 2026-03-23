@@ -125,3 +125,44 @@ export async function adminUnblockParticipant(req: Request, res: Response) {
 
   return res.json({ message: `${status.user.name} unblocked for round ${status.roundNumber}.` });
 }
+
+export async function adminExtendTimer(req: Request, res: Response) {
+  const { matchupId, extraMinutes } = req.body as { matchupId?: string; extraMinutes?: number };
+  if (!matchupId || !extraMinutes || extraMinutes <= 0) {
+    return res.status(400).json({ message: "matchupId and positive extraMinutes are required." });
+  }
+
+  const extraSeconds = Math.round(Number(extraMinutes) * 60);
+
+  const matchup = await prisma.matchup.update({
+    where: { id: matchupId },
+    data: { timerExtension: { increment: extraSeconds } },
+    select: {
+      id: true,
+      roundNumber: true,
+      timerExtension: true,
+      user1Id: true,
+      user2Id: true,
+      user1: { select: { name: true } },
+      user2: { select: { name: true } },
+    },
+  });
+
+  const io = getIO();
+  // Notify both participants in the matchup
+  io.to(`user:${matchup.user1Id}`).emit("matchup:timer-extended", {
+    matchupId: matchup.id,
+    extraSeconds,
+    totalExtension: matchup.timerExtension,
+  });
+  io.to(`user:${matchup.user2Id}`).emit("matchup:timer-extended", {
+    matchupId: matchup.id,
+    extraSeconds,
+    totalExtension: matchup.timerExtension,
+  });
+
+  return res.json({
+    message: `Timer extended by ${extraMinutes}m for matchup between ${matchup.user1.name} and ${matchup.user2.name}.`,
+    matchup,
+  });
+}

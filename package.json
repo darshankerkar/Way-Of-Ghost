@@ -1,7 +1,7 @@
 {
   "name": "gdg-spectrum",
   "version": "1.0.0",
-  "description": "Way Of Ghost event platform",
+  "description": "Last Standing Ronin event platform",
   "private": true,
   "scripts": {
     "dev:client": "npm run dev --prefix client",

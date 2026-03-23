@@ -1,6 +1,6 @@
 import { MatchupStatus, RoundStatus } from "@prisma/client";
 import { prisma } from "../config/prisma.js";
-import { clearRound2PushState } from "./quiz-push-state.service.js";
+
 
 function shuffle<T>(arr: T[]): T[] {
   const copy = [...arr];
@@ -13,7 +13,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 export async function startRound(roundNumber: number) {
   // Guard: check if this round already has LIVE matchups
-  if (roundNumber === 1) {
+  if (roundNumber === 1 || roundNumber === 2) {
     const existingLive = await prisma.matchup.count({
       where: { roundNumber, status: MatchupStatus.LIVE },
     });
@@ -37,20 +37,7 @@ export async function startRound(roundNumber: number) {
     throw new Error("Need at least 2 active participants to start round.");
   }
 
-  if (roundNumber === 2) {
-    const questionCount = await prisma.quizQuestion.count({ where: { roundNumber: 2 } });
-    if (questionCount === 0) {
-      throw new Error("No quiz questions configured for round 2.");
-    }
-  }
-
-  await prisma.eventState.upsert({
-    where: { id: "singleton" },
-    update: { currentRound: roundNumber, roundStatus: RoundStatus.LIVE },
-    create: { id: "singleton", currentRound: roundNumber, roundStatus: RoundStatus.LIVE },
-  });
-
-  if (roundNumber === 1) {
+  if (roundNumber === 1 || roundNumber === 2) {
     const problems = await prisma.problem.findMany({ where: { roundNumber } });
     if (problems.length === 0) {
       throw new Error(`No problems configured for round ${roundNumber}.`);
@@ -76,17 +63,23 @@ export async function startRound(roundNumber: number) {
 
   // Round 3 is MVP - no matchups needed, just display problems
 
-  return prisma.eventState.findUnique({ where: { id: "singleton" } });
+  return prisma.eventState.upsert({
+    where: { id: "singleton" },
+    update: { currentRound: roundNumber, roundStatus: RoundStatus.LIVE },
+    create: {
+      id: "singleton",
+      currentRound: roundNumber,
+      roundStatus: RoundStatus.LIVE,
+    },
+  });
 }
 
 export async function resetRound(roundNumber: number) {
   if (roundNumber === 1) {
-    clearRound2PushState();
     // Hard reset for a fresh tournament restart.
     const [deletedMatchups] = await prisma.$transaction([
       prisma.matchup.deleteMany({}),
       prisma.submission.deleteMany({}),
-      prisma.quizResponse.deleteMany({}),
       prisma.proctoringStatus.deleteMany({}),
       prisma.user.updateMany({
         where: { role: "PARTICIPANT" },
@@ -103,9 +96,17 @@ export async function resetRound(roundNumber: number) {
   }
 
   if (roundNumber === 2) {
-    clearRound2PushState();
+    // Find all users who were eliminated in round 2
+    const round2Matchups = await prisma.matchup.findMany({ where: { roundNumber: 2 } });
+    const round2LoserIds: string[] = [];
+    for (const m of round2Matchups) {
+      if (m.winnerId) {
+        round2LoserIds.push(m.user1Id === m.winnerId ? m.user2Id : m.user1Id);
+      }
+    }
+
     await prisma.$transaction([
-      prisma.quizResponse.deleteMany({ where: { question: { roundNumber: 2 } } }),
+      prisma.submission.deleteMany({ where: { problem: { roundNumber: 2 } } }),
       prisma.matchup.deleteMany({ where: { roundNumber: 2 } }),
       prisma.proctoringStatus.deleteMany({ where: { roundNumber: 2 } }),
       prisma.eventState.upsert({
@@ -113,9 +114,14 @@ export async function resetRound(roundNumber: number) {
         update: { currentRound: 2, roundStatus: RoundStatus.NOT_STARTED },
         create: { id: "singleton", currentRound: 2, roundStatus: RoundStatus.NOT_STARTED },
       }),
+      // Un-eliminate the users who lost in Round 2
+      prisma.user.updateMany({
+        where: { id: { in: round2LoserIds } },
+        data: { eliminatedAt: null },
+      }),
     ]);
 
-    // Recalculate bits from surviving data (round 1 wins + round 2 quiz points).
+    // Recalculate bits from surviving data (round 1 wins).
     const participants = await prisma.user.findMany({
       where: { role: "PARTICIPANT" },
       select: { id: true },
@@ -129,20 +135,11 @@ export async function resetRound(roundNumber: number) {
       where: { roundNumber: 1, winnerId: { not: null } },
       _count: { winnerId: true },
     });
+    
     for (const row of round1Winners) {
       if (!row.winnerId) continue;
       const prev = bitsByUser.get(row.winnerId) ?? 0;
       bitsByUser.set(row.winnerId, prev + (row._count.winnerId ?? 0) * 100);
-    }
-
-    const quizTotals = await prisma.quizResponse.groupBy({
-      by: ["userId"],
-      where: { question: { roundNumber: 2 } },
-      _sum: { pointsEarned: true },
-    });
-    for (const row of quizTotals) {
-      const prev = bitsByUser.get(row.userId) ?? 0;
-      bitsByUser.set(row.userId, prev + (row._sum.pointsEarned ?? 0));
     }
 
     await prisma.$transaction(
@@ -151,7 +148,7 @@ export async function resetRound(roundNumber: number) {
       )
     );
 
-    return { deleted: 0 };
+    return { deleted: round2Matchups.length };
   }
 
   const deleted = await prisma.matchup.deleteMany({ where: { roundNumber } });

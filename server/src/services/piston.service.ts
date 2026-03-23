@@ -7,6 +7,13 @@ type RunParams = {
   stdin?: string;
 };
 
+function normalizeLanguage(language: string): string {
+  const lang = language.trim().toLowerCase();
+  if (lang === "c++" || lang === "cpp" || lang === "g++") return "c++";
+  if (lang === "gcc") return "c";
+  return lang;
+}
+
 function normalizeJavaSource(source: string): string {
   const hasMainClass = /\b(?:public\s+)?class\s+Main\b/.test(source);
   if (hasMainClass) return source;
@@ -19,13 +26,14 @@ function normalizeJavaSource(source: string): string {
 }
 
 export async function executeCode({ language, source, stdin = "" }: RunParams) {
-  const normalizedSource = language === "java" ? normalizeJavaSource(source) : source;
+  const normalizedLanguage = normalizeLanguage(language);
+  const normalizedSource = normalizedLanguage === "java" ? normalizeJavaSource(source) : source;
 
   const payload = {
-    language,
+    language: normalizedLanguage,
     version: "*",
     files: [
-      language === "java"
+      normalizedLanguage === "java"
         ? { name: "Main.java", content: normalizedSource }
         : { content: normalizedSource },
     ],

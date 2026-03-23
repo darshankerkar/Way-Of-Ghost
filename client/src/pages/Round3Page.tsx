@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { http } from "../api/http";
 import { useExamMode } from "../hooks/useExamMode";
-import type { Problem } from "../types";
+import { useAuthStore } from "../store/auth.store";
+import type { Problem, LeaderboardEntry } from "../types";
+
+const BITS_REQUIRED = 200;
 
 export function Round3Page() {
   const [problems, setProblems] = useState<Problem[]>([]);
   const [selected, setSelected] = useState<Problem | null>(null);
+  const [accessChecked, setAccessChecked] = useState(false);
+  const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const {
     fullscreenLockActive,
     tabSwitchCount,
@@ -17,12 +24,35 @@ export function Round3Page() {
     reEnterFullscreen,
   } = useExamMode("Round 3", 3);
 
+  // ── Access guard: only 200+ bits allowed ──────────────────────────────
   useEffect(() => {
+    if (!user) { navigate("/"); return; }
+    http.get<LeaderboardEntry[]>("/round/leaderboard/global").then(({ data }) => {
+      const myEntry = data.find((e) => e.id === user.id);
+      if ((myEntry?.bits ?? 0) < BITS_REQUIRED) {
+        navigate("/dashboard", { replace: true, state: { r3Locked: true } });
+      } else {
+        setAccessChecked(true);
+      }
+    }).catch(() => navigate("/dashboard", { replace: true }));
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (!accessChecked) return;
     http.get<Problem[]>("/round/3/problems").then(({ data }) => {
       setProblems(data);
       if (data.length > 0) setSelected(data[0]);
     }).catch(() => null);
-  }, []);
+  }, [accessChecked]);
+
+  if (!accessChecked) {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center text-white">
+        <p className="text-gray-400 text-sm">Verifying access…</p>
+      </div>
+    );
+  }
+
 
   if (problems.length === 0) {
     return (
