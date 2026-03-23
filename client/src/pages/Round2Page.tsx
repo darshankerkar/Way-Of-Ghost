@@ -30,8 +30,8 @@ export function Round2Page() {
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATION);
   const [matchResult, setMatchResult] = useState<{
-    winnerId: string;
-    loserId: string;
+    winnerId: string | null;
+    loserId: string | null;
   } | null>(null);
   const [opponentStatus, setOpponentStatus] = useState("");
   const [runError, setRunError] = useState("");
@@ -107,6 +107,8 @@ export function Round2Page() {
                 ? myMatch.user2.id
                 : myMatch.user1.id;
             setMatchResult({ winnerId: myMatch.winner.id, loserId });
+          } else {
+            setMatchResult({ winnerId: null, loserId: null });
           }
         }
       } else {
@@ -212,8 +214,8 @@ export function Round2Page() {
 
     const handleResult = (data: {
       matchupId: string;
-      winnerId: string;
-      loserId: string;
+      winnerId: string | null;
+      loserId: string | null;
     }) => {
       if (data.matchupId === matchup.id) setMatchResult(data);
     };
@@ -374,22 +376,26 @@ export function Round2Page() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
           <div
             className={`rounded-lg p-12 text-center ${
-              matchResult.winnerId === user?.id
+              matchResult.winnerId && matchResult.winnerId === user?.id
                 ? "border-2 border-ghost-green shadow-[0_0_40px_rgba(46,204,113,0.5)]"
                 : "border-2 border-ghost-red shadow-[0_0_40px_rgba(231,76,60,0.5)]"
             }`}
           >
             <h2 className="text-5xl font-bold">
-              {matchResult.winnerId === user?.id ? (
+              {matchResult.winnerId === null ? (
+                <span className="text-ghost-red">DEFEATED</span>
+              ) : matchResult.winnerId === user?.id ? (
                 <span className="text-ghost-green">VICTORY</span>
               ) : (
                 <span className="text-ghost-red">DEFEATED</span>
               )}
             </h2>
             <p className="mt-4 text-xl text-gray-300">
-              {matchResult.winnerId === user?.id
-                ? "You advance!"
-                : "Better luck next time."}
+              {matchResult.winnerId === null
+                ? "Time up — no one solved."
+                : matchResult.winnerId === user?.id
+                  ? "You advance!"
+                  : "Better luck next time."}
             </p>
           </div>
         </div>

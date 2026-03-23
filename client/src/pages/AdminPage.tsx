@@ -518,6 +518,14 @@ export function AdminPage() {
                           <span className="text-gray-400">
                             {m.problem.title}
                           </span>
+                          {m.status === "COMPLETED" &&
+                            !m.winner &&
+                            m.user1.eliminatedAt &&
+                            m.user2.eliminatedAt && (
+                              <span className="rounded bg-ghost-red/20 px-2 py-0.5 text-xs font-semibold text-ghost-red">
+                                BOTH ELIMINATED
+                              </span>
+                            )}
                           <span
                             className={`rounded px-2 py-0.5 text-xs ${
                               m.status === "LIVE"
