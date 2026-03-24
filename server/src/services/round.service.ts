@@ -30,10 +30,16 @@ export async function startRound(roundNumber: number) {
       role: "PARTICIPANT",
       status: "APPROVED",
       eliminatedAt: null,
+      ...(roundNumber === 2 ? { bits: { gte: 100 } } : {}),
     },
   });
 
   if (users.length < 2 && (roundNumber === 1 || roundNumber === 2)) {
+    if (roundNumber === 2) {
+      throw new Error(
+        "Need at least 2 active participants with 100+ Bits to start round 2.",
+      );
+    }
     throw new Error("Need at least 2 active participants to start round.");
   }
 

@@ -60,6 +60,7 @@ export async function loginUser(email: string, password: string) {
       email: user.email,
       role: user.role,
       status: user.status,
+      bits: user.bits,
     },
   };
 }

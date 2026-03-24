@@ -124,10 +124,14 @@ export function Round2Page() {
         setRunError("");
         setTimeLeft(ROUND_DURATION);
       }
-    } catch {
-      /* no matchup yet */
+    } catch (err) {
+      const status = (err as { response?: { status?: number } }).response
+        ?.status;
+      if (status === 403) {
+        navigate("/dashboard", { replace: true, state: { r2Locked: true } });
+      }
     }
-  }, [user]);
+  }, [navigate, user]);
 
   // Initial fetch
   useEffect(() => {

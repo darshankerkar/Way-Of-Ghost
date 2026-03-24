@@ -27,6 +27,8 @@ export function AdminPage() {
     "rounds" | "users" | "problems" | "leaderboard"
   >("rounds");
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [bulkUpdating, setBulkUpdating] = useState(false);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">(
     "success",
@@ -101,6 +103,12 @@ export function AdminPage() {
     loadRoundMatchupCounts();
     loadLeaderboard();
   }, [loadPending, loadEventState, loadRoundMatchupCounts, loadLeaderboard]);
+
+  useEffect(() => {
+    setSelectedUserIds((prev) =>
+      prev.filter((id) => pendingUsers.some((u) => u.id === id)),
+    );
+  }, [pendingUsers]);
 
   useEffect(() => {
     const socket = getSocket();
@@ -199,6 +207,49 @@ export function AdminPage() {
     await http.patch(`/admin/users/${userId}`, { status });
     flash(`User ${status.toLowerCase()}.`, "success");
     await loadPending();
+  }
+
+  async function approveSelectedUsers() {
+    if (selectedUserIds.length === 0) {
+      flash("Select at least one user to approve.", "error");
+      return;
+    }
+
+    setBulkUpdating(true);
+    try {
+      await Promise.all(
+        selectedUserIds.map((userId) =>
+          http.patch(`/admin/users/${userId}`, { status: "APPROVED" }),
+        ),
+      );
+      flash(`Approved ${selectedUserIds.length} user(s).`, "success");
+      setSelectedUserIds([]);
+      await loadPending();
+    } catch (err) {
+      flash(
+        (err as { response?: { data?: { message?: string } } }).response?.data
+          ?.message ?? "Failed to approve selected users.",
+        "error",
+      );
+    } finally {
+      setBulkUpdating(false);
+    }
+  }
+
+  const allPendingIds = pendingUsers.map((u) => u.id);
+  const allSelected =
+    pendingUsers.length > 0 && selectedUserIds.length === pendingUsers.length;
+
+  function toggleSelectAll() {
+    setSelectedUserIds(allSelected ? [] : allPendingIds);
+  }
+
+  function toggleSelectUser(userId: string) {
+    setSelectedUserIds((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId],
+    );
   }
 
   async function startRound(n: number) {
@@ -632,24 +683,59 @@ export function AdminPage() {
             <div className="rounded-xl bg-ghost-panel p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Pending Users</h2>
-                <button
-                  className="text-sm text-ghost-gold"
-                  onClick={loadPending}
-                >
-                  Refresh
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="rounded bg-ghost-gold px-3 py-1 text-sm font-semibold text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={approveSelectedUsers}
+                    disabled={bulkUpdating || selectedUserIds.length === 0}
+                  >
+                    {bulkUpdating
+                      ? "Approving..."
+                      : `Approve Selected (${selectedUserIds.length})`}
+                  </button>
+                  <button
+                    className="text-sm text-ghost-gold"
+                    onClick={loadPending}
+                  >
+                    Refresh
+                  </button>
+                </div>
               </div>
+
+              {pendingUsers.length > 0 && (
+                <div className="mt-3 flex items-center gap-2 text-sm text-gray-300">
+                  <input
+                    id="select-all-pending"
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleSelectAll}
+                    className="h-4 w-4"
+                  />
+                  <label htmlFor="select-all-pending" className="select-none">
+                    Select all pending users
+                  </label>
+                </div>
+              )}
+
               <div className="mt-3 space-y-2">
                 {pendingUsers.map((u) => (
                   <div
                     key={u.id}
                     className="flex flex-col gap-3 rounded-lg bg-black/30 p-3 md:flex-row md:items-center md:justify-between"
                   >
-                    <div>
-                      <p className="font-medium">{u.name}</p>
-                      <p className="text-sm text-gray-400">
-                        {u.email} — {u.college}
-                      </p>
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedUserIds.includes(u.id)}
+                        onChange={() => toggleSelectUser(u.id)}
+                        className="mt-1 h-4 w-4"
+                      />
+                      <div>
+                        <p className="font-medium">{u.name}</p>
+                        <p className="text-sm text-gray-400">
+                          {u.email} — {u.college}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       <button

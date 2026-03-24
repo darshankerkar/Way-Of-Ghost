@@ -400,6 +400,11 @@ export function Round1Page() {
                   ? "You advance!"
                   : "Better luck next time."}
             </p>
+            {matchResult.winnerId === user?.id && (
+              <p className="mt-2 text-sm text-ghost-green/90">
+                You survived this stage
+              </p>
+            )}
           </div>
         </div>
       )}

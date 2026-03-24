@@ -8,6 +8,20 @@ export async function getEventState(_req: Request, res: Response) {
 
 export async function getRoundMatchups(req: Request, res: Response) {
   const roundNumber = Number(req.params.roundNumber);
+
+  if (roundNumber === 2 && req.auth?.role !== "ADMIN") {
+    const user = await prisma.user.findUnique({
+      where: { id: req.auth!.userId },
+      select: { bits: true },
+    });
+
+    if (!user || user.bits < 100) {
+      return res
+        .status(403)
+        .json({ message: "Need at least 100 Bits to access Round 2." });
+    }
+  }
+
   const matchups = await prisma.matchup.findMany({
     where: { roundNumber },
     include: {

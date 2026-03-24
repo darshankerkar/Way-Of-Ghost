@@ -12,10 +12,29 @@ export function DashboardPage() {
   const location = useLocation();
   const [eventState, setEventState] = useState<EventState | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const myEntry = leaderboard.find((e) => e.id === user?.id);
+  const currentBits = myEntry?.bits ?? user?.bits ?? 0;
+  const isRound2Locked = currentBits < 100;
+  const isRound3Locked = currentBits < 200;
+
+  const navState = location.state as
+    | { r2Locked?: boolean; r3Locked?: boolean }
+    | null;
+  const r2Locked = navState?.r2Locked === true;
   const r3Locked =
-    (location.state as { r3Locked?: boolean } | null)?.r3Locked === true;
+    navState?.r3Locked === true;
 
   const enterRound = async (roundNumber: number) => {
+    if (roundNumber === 2 && isRound2Locked) {
+      navigate("/dashboard", { replace: true, state: { r2Locked: true } });
+      return;
+    }
+
+    if (roundNumber === 3 && isRound3Locked) {
+      navigate("/dashboard", { replace: true, state: { r3Locked: true } });
+      return;
+    }
+
     try {
       const el = document.documentElement as HTMLElement & {
         webkitRequestFullscreen?: () => Promise<void> | void;
@@ -76,8 +95,6 @@ export function DashboardPage() {
     "MVP Building — Build a working prototype from a problem statement",
   ];
   const roundIcons = ["", "R1", "R2", "R3"];
-
-  const myEntry = leaderboard.find((e) => e.id === user?.id);
 
   return (
     <div className="app-shell min-h-screen text-white">
@@ -160,6 +177,13 @@ export function DashboardPage() {
           </div>
         )}
 
+        {r2Locked && (
+          <div className="rounded-xl border border-ghost-red/40 bg-ghost-red/10 px-4 py-3 text-sm text-ghost-red text-center mb-4">
+            🔒 You need at least <strong>100 Bits</strong> to access Shadow
+            Tactics (Round 2).
+          </div>
+        )}
+
         {eventState &&
           eventState.roundStatus === "LIVE" &&
           eventState.currentRound > 0 && (
@@ -178,6 +202,10 @@ export function DashboardPage() {
                 </div>
                 <button
                   onClick={() => void enterRound(eventState.currentRound)}
+                  disabled={
+                    (eventState.currentRound === 2 && isRound2Locked) ||
+                    (eventState.currentRound === 3 && isRound3Locked)
+                  }
                   className="contest-btn-primary rounded-xl px-7 py-3 text-sm font-bold"
                 >
                   Enter Round →
@@ -208,14 +236,15 @@ export function DashboardPage() {
             const isLive =
               eventState?.currentRound === r &&
               eventState.roundStatus === "LIVE";
-            const isRound3Locked = r === 3 && (myEntry?.bits ?? 0) < 200;
+            const isLocked =
+              (r === 2 && isRound2Locked) || (r === 3 && isRound3Locked);
             return (
               <button
                 key={r}
-                disabled={isRound3Locked}
+                disabled={isLocked}
                 onClick={() => void enterRound(r)}
                 className={`glass-card p-5 group transition-all duration-200 text-left ${
-                  isRound3Locked
+                  isLocked
                     ? "opacity-40 cursor-not-allowed"
                     : "hover:-translate-y-1 hover:border-ghost-gold/25 cursor-pointer"
                 } ${isLive ? "border-ghost-gold/35" : ""}`}
@@ -229,9 +258,9 @@ export function DashboardPage() {
                       LIVE
                     </span>
                   )}
-                  {isRound3Locked && (
+                  {isLocked && (
                     <span className="text-[10px] uppercase font-bold text-gray-500">
-                      🔒 Need 200 Bits
+                      {r === 2 ? "🔒 Need 100 Bits" : "🔒 Need 200 Bits"}
                     </span>
                   )}
                 </div>

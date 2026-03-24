@@ -9,6 +9,7 @@ export type AuthUser = {
   email: string;
   role: Role;
   status: UserStatus;
+  bits: number;
 };
 
 export type Problem = {
