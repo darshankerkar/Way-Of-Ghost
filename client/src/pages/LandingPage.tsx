@@ -5,7 +5,7 @@ import { register } from "../api/auth";
 import { connectSocket } from "../socket/client";
 import { useAuthStore } from "../store/auth.store";
 
-/* ─── Reusable Ronin figure (Samurai style) ──────────────────────────────── */
+/* ─── Reusable Ronin figure — uses the project's actual SVG artwork ───── */
 export function RoninFigure({
   scale = 1,
   className = "",
@@ -13,36 +13,34 @@ export function RoninFigure({
   scale?: number;
   className?: string;
 }) {
+  /* base px size: the SVG is square, so 120×120 at scale=1 */
+  const size = Math.round(120 * scale);
   return (
     <div
-      className={`ronin-figure ${className}`}
+      className={`ronin-figure ronin-svg-float ${className}`}
       style={{
-        transform: `scale(${scale})`,
-        transformOrigin: "center top",
         display: "inline-block",
+        width: size,
+        height: size,
+        transformOrigin: "center center",
       }}
       aria-hidden="true"
     >
-      <svg
-        width="60"
-        height="60"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-ghost-gold"
-      >
-        <path d="M14.5 17.5L3 6V3h3l11.5 11.5" />
-        <path d="m13 19 6-6" />
-        <path d="M16 16 20 20" />
-        <path d="M19 21 21 19" />
-        <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
-        <line x1="5" x2="9" y1="14" y2="10" />
-        <line x1="17" x2="11" y1="11" y2="17" />
-        <line x1="2" x2="4" y1="20" y2="22" />
-      </svg>
+      <img
+        src="/2_20260324_175834_0001.svg"
+        alt=""
+        width={size}
+        height={size}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          /* Remove the white background the SVG bakes in */
+          mixBlendMode: "screen",
+          filter: "drop-shadow(0 0 14px rgba(56,189,248,0.55))",
+        }}
+        draggable={false}
+      />
     </div>
   );
 }

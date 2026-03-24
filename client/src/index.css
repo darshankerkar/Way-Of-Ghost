@@ -104,7 +104,18 @@ body {
   color: #0c4a6e;
 }
 
-/* Track */
+/* ─── Ronin SVG floating animation ─────────────────────────────────── */
+@keyframes ronin-float {
+  0%,100% { transform: translateY(0)    scale(1);    filter: drop-shadow(0 0 14px rgba(56,189,248,0.55)); }
+  40%     { transform: translateY(-9px) scale(1.02); filter: drop-shadow(0 0 22px rgba(56,189,248,0.80)); }
+  70%     { transform: translateY(-4px) scale(1.01); filter: drop-shadow(0 0 18px rgba(56,189,248,0.65)); }
+}
+.ronin-svg-float {
+  animation: ronin-float 4.8s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+
 .theme-toggle-track {
   width: 38px;
   height: 20px;
