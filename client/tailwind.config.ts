@@ -6,13 +6,27 @@ const config: Config = {
     extend: {
       colors: {
         ghost: {
-          bg: "#050507",
-          panel: "#090d16",
-          gold: "#38bdf8", /* Changed to neon cyan but keeping key as 'gold' for backwards-compat in class names, or simply adding it */
-          cyan: "#38bdf8",
-          green: "#2ecc71",
-          red: "#e74c3c",
+          bg:    "#080406",
+          panel: "#180a0c",
+          gold:  "#c9a227",  /* samurai gold  */
+          red:   "#c0392b",  /* blood crimson */
+          green: "#4a7c59",  /* muted jade    */
         },
+        ronin: {
+          black:  "#080406",
+          deep:   "#0f0508",
+          dark:   "#180a0c",
+          red:    "#8b1a1a",
+          crimson:"#c0392b",
+          gold:   "#c9a227",
+          ash:    "#eae0d5",
+        },
+      },
+      fontFamily: {
+        cinzel: ["Cinzel", "serif"],
+        "cinzel-dec": ["Cinzel Decorative", "serif"],
+        inter:  ["Inter", "sans-serif"],
+        noto:   ["Noto Serif JP", "serif"],
       },
     },
   },
