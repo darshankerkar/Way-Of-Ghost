@@ -253,6 +253,19 @@ export function AdminPage() {
   }
 
   async function startRound(n: number) {
+    if (n === 1 || n === 2) {
+      const expectedCount =
+        n === 1
+          ? leaderboard.filter((u) => !u.eliminated).length
+          : leaderboard.filter((u) => !u.eliminated && u.bits >= 100).length;
+
+      if (expectedCount % 2 !== 0) {
+        if (!confirm(`Warning: There is an odd number of active participants (${expectedCount}) eligible for Round ${n}. One participant will not be matched in a 1v1. Do you still want to start the round?`)) {
+          return;
+        }
+      }
+    }
+
     try {
       const { data } = await http.post("/admin/start-round", {
         roundNumber: n,

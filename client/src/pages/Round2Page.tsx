@@ -12,6 +12,7 @@ const LANGUAGES = [
   { label: "Java", value: "java" },
   { label: "Python", value: "python" },
   { label: "C++", value: "c++" },
+  { label: "JavaScript", value: "javascript" },
 ];
 
 const ROUND_DURATION = 30 * 60;
@@ -79,7 +80,7 @@ export function Round2Page() {
             let initialCode = (p.starterCode as unknown as Record<
               string,
               string
-            >) || { java: "", python: "", "c++": "" };
+            >) || { java: "", python: "", "c++": "", javascript: "" };
             const saved = localStorage.getItem(`wog_r2_code_${myMatch.id}`);
             if (saved) {
               try {
@@ -257,7 +258,7 @@ export function Round2Page() {
     if (!matchResult) return;
     const timeoutId = setTimeout(() => {
       navigate("/dashboard");
-    }, 2000);
+    }, 10000);
     return () => clearTimeout(timeoutId);
   }, [matchResult, navigate]);
 
@@ -387,19 +388,19 @@ export function Round2Page() {
           >
             <h2 className="text-5xl font-bold">
               {matchResult.winnerId === null ? (
-                <span className="text-ghost-red">DEFEATED</span>
+                <span className="text-ghost-red">BLIND LEADING THE BLIND</span>
               ) : matchResult.winnerId === user?.id ? (
-                <span className="text-ghost-green">VICTORY</span>
+                <span className="text-ghost-green">NOT DEAD YET</span>
               ) : (
-                <span className="text-ghost-red">DEFEATED</span>
+                <span className="text-ghost-red">TOTALLY OBLITERATED</span>
               )}
             </h2>
             <p className="mt-4 text-xl text-gray-300">
               {matchResult.winnerId === null
-                ? "Time up — no one solved."
+                ? "Pathetic display. You both fumbled in the dark until the clock ran out."
                 : matchResult.winnerId === user?.id
-                  ? "You advance!"
-                  : "Better luck next time."}
+                  ? "You slithered past this one. But enjoy it while it lasts—the final round is going to utterly destroy you."
+                  : "You stepped on every single trap. Your code is a burning pile of garbage and you are entirely unworthy."}
             </p>
           </div>
         </div>

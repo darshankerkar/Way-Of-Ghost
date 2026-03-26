@@ -14,6 +14,7 @@ const LANGUAGES = [
   { label: "Java", value: "java" },
   { label: "Python", value: "python" },
   { label: "C++", value: "c++" },
+  { label: "JavaScript", value: "javascript" },
 ];
 
 export function Round1Page() {
@@ -78,6 +79,9 @@ export function Round1Page() {
             setCode(
               (p.starterCode as unknown as Record<string, string>) || {
                 java: "",
+                python: "",
+                "c++": "",
+                javascript: "",
               },
             );
           }
@@ -256,7 +260,7 @@ export function Round1Page() {
     if (!matchResult) return;
     const timeoutId = setTimeout(() => {
       navigate("/dashboard");
-    }, 2000);
+    }, 10000);
     return () => clearTimeout(timeoutId);
   }, [matchResult, navigate]);
 
@@ -386,19 +390,19 @@ export function Round1Page() {
           >
             <h2 className="text-5xl font-bold">
               {matchResult.winnerId === null ? (
-                <span className="text-ghost-red">DEFEATED</span>
+                <span className="text-ghost-red">MUTUAL DISHONOR</span>
               ) : matchResult.winnerId === user?.id ? (
-                <span className="text-ghost-green">VICTORY</span>
+                <span className="text-ghost-green">YOU SURVIVED... FOR NOW</span>
               ) : (
-                <span className="text-ghost-red">DEFEATED</span>
+                <span className="text-ghost-red">ABSOLUTE DISGRACE</span>
               )}
             </h2>
             <p className="mt-4 text-xl text-gray-300">
               {matchResult.winnerId === null
-                ? "Time up — no one solved."
+                ? "Two fools staring at a screen. Both of your bloodlines end here."
                 : matchResult.winnerId === user?.id
-                  ? "You advance!"
-                  : "Better luck next time."}
+                  ? "Congrats, you beat a peasant. Don't get cocky, Round 2 will chew you up and spit you out."
+                  : "Even a headless chicken writes better code. Your keyboard should be confiscated to spare your ancestors the shame."}
             </p>
             {matchResult.winnerId === user?.id && (
               <p className="mt-2 text-sm text-ghost-green/90">
