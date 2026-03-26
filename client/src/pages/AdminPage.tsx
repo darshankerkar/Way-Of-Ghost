@@ -59,19 +59,25 @@ export function AdminPage() {
     try {
       const { data } = await http.get<PendingUser[]>("/admin/pending-users");
       setPendingUsers(data);
-    } catch {}
+    } catch {
+      /* ignore transient admin load error */
+    }
   }, []);
   const loadEventState = useCallback(async () => {
     try {
       const { data } = await http.get<EventState>("/round/event-state");
       setEventState(data);
-    } catch {}
+    } catch {
+      /* ignore transient admin load error */
+    }
   }, []);
   const loadMatchups = useCallback(async (round: number) => {
     try {
       const { data } = await http.get<Matchup[]>(`/round/${round}/matchups`);
       setMatchups(data);
-    } catch {}
+    } catch {
+      /* ignore transient admin load error */
+    }
   }, []);
   const loadRoundMatchupCounts = useCallback(async () => {
     try {
@@ -85,7 +91,9 @@ export function AdminPage() {
         2: r2.data.length,
         3: r3.data.length,
       });
-    } catch {}
+    } catch {
+      /* ignore transient admin load error */
+    }
   }, []);
 
   const loadLeaderboard = useCallback(async () => {
@@ -94,7 +102,9 @@ export function AdminPage() {
         "/round/leaderboard/global",
       );
       setLeaderboard(data);
-    } catch {}
+    } catch {
+      /* ignore transient admin load error */
+    }
   }, []);
 
   useEffect(() => {
@@ -392,32 +402,32 @@ export function AdminPage() {
   const eliminatedParticipants = leaderboard.filter((u) => u.eliminated).length;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-10 pt-5 text-white md:px-8">
-      <div className="glass-card p-5 md:p-6">
+    <div className="mx-auto max-w-7xl px-4 pb-10 pt-5 text-[var(--ink)] md:px-8">
+      <div className="p-5 md:p-6 mb-8 rounded-xl shadow-lg border border-[rgba(139,0,0,0.2)] bg-[rgba(255,250,240,0.8)] backdrop-blur-md">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-ghost-gold">
               Admin Control Panel
             </h1>
-            <p className="mt-1 text-sm text-gray-400">
+            <p className="mt-1 text-sm text-[var(--ink-light)]">
               Manage rounds, approvals, problems, quiz, and live standings.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center text-xs md:text-sm">
-            <div className="rounded-lg bg-black/30 px-3 py-2">
-              <p className="text-gray-400">Round</p>
+            <div className="rounded-lg bg-[rgba(201,163,78,0.12)] border border-[rgba(201,163,78,0.25)] px-3 py-2">
+              <p className="text-[var(--ink-light)]">Round</p>
               <p className="font-semibold text-ghost-gold">
                 {eventState?.currentRound ?? 0}
               </p>
             </div>
-            <div className="rounded-lg bg-black/30 px-3 py-2">
-              <p className="text-gray-400">Active</p>
+            <div className="rounded-lg bg-[rgba(201,163,78,0.12)] border border-[rgba(201,163,78,0.25)] px-3 py-2">
+              <p className="text-[var(--ink-light)]">Active</p>
               <p className="font-semibold text-ghost-green">
                 {activeParticipants}
               </p>
             </div>
-            <div className="rounded-lg bg-black/30 px-3 py-2">
-              <p className="text-gray-400">Eliminated</p>
+            <div className="rounded-lg bg-[rgba(201,163,78,0.12)] border border-[rgba(201,163,78,0.25)] px-3 py-2">
+              <p className="text-[var(--ink-light)]">Eliminated</p>
               <p className="font-semibold text-ghost-red">
                 {eliminatedParticipants}
               </p>
@@ -433,12 +443,12 @@ export function AdminPage() {
           </p>
         )}
 
-        <div className="mt-5 flex flex-wrap gap-2 border-b border-gray-800 pb-3">
+        <div className="mt-5 flex flex-wrap gap-2 border-b border-[rgba(139,0,0,0.15)] pb-3">
           {tabs.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === t.id ? "bg-ghost-gold/15 text-ghost-gold" : "text-gray-400 hover:bg-white/5 hover:text-gray-200"}`}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === t.id ? "bg-ghost-gold/15 text-ghost-gold" : "text-[var(--ink-light)] hover:bg-[rgba(139,0,0,0.05)] hover:text-gray-200"}`}
             >
               {t.label}
             </button>
@@ -450,17 +460,17 @@ export function AdminPage() {
           {tab === "rounds" && (
             <div className="space-y-6">
               <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
-                <div className="rounded-xl bg-ghost-panel p-4">
+                <div className="rounded-xl bg-[rgba(255,250,240,0.95)] border border-[rgba(201,163,78,0.3)] shadow-[0_8px_30px_rgba(139,0,0,0.08)] p-4">
                   <h2 className="text-lg font-semibold">Event State</h2>
                   {eventState ? (
                     <div className="mt-3 space-y-2 text-sm">
-                      <p className="text-gray-300">
+                      <p className="text-[rgba(26,26,26,0.65)]">
                         Round:{" "}
                         <span className="font-bold text-ghost-gold">
                           {eventState.currentRound}
                         </span>
                       </p>
-                      <p className="text-gray-300">
+                      <p className="text-[rgba(26,26,26,0.65)]">
                         Status:{" "}
                         <span className="font-bold">
                           {eventState.roundStatus}
@@ -468,13 +478,13 @@ export function AdminPage() {
                       </p>
                     </div>
                   ) : (
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm text-[rgba(26,26,26,0.65)]">
                       No event state yet.
                     </p>
                   )}
                 </div>
 
-                <div className="rounded-xl bg-ghost-panel p-4">
+                <div className="rounded-xl bg-[rgba(255,250,240,0.95)] border border-[rgba(201,163,78,0.3)] shadow-[0_8px_30px_rgba(139,0,0,0.08)] p-4">
                   <h2 className="text-lg font-semibold">Round Controls</h2>
                   <div className="mt-3 grid gap-3 md:grid-cols-3">
                     {[1, 2, 3].map((n) => {
@@ -485,9 +495,9 @@ export function AdminPage() {
                         (roundMatchupCounts[n] ?? 0) > 0;
                       const canStart = !isLive && !hasExistingMatchups;
                       return (
-                        <div key={n} className="rounded-lg bg-black/30 p-3">
+                        <div key={n} className="rounded-lg bg-[rgba(201,163,78,0.12)] border border-[rgba(201,163,78,0.25)] p-3">
                           <div className="mb-2 flex items-center justify-between">
-                            <span className="text-sm font-semibold text-gray-300">
+                            <span className="text-sm font-semibold text-[rgba(26,26,26,0.65)]">
                               Round {n}
                             </span>
                             {isLive && (
@@ -501,24 +511,24 @@ export function AdminPage() {
                               </span>
                             )}
                             {!isLive && !hasExistingMatchups && (
-                              <span className="rounded bg-gray-700/70 px-2 py-0.5 text-[11px] font-semibold text-gray-300">
+                              <span className="rounded bg-gray-700/70 px-2 py-0.5 text-[11px] font-semibold text-[rgba(26,26,26,0.65)]">
                                 READY
                               </span>
                             )}
                           </div>
-                          <p className="mb-3 text-xs text-gray-500">
+                          <p className="mb-3 text-xs text-[rgba(26,26,26,0.65)]">
                             Matchups: {roundMatchupCounts[n] ?? 0}
                           </p>
                           <div className="flex gap-2">
                             <button
-                              className="flex-1 rounded bg-ghost-gold px-3 py-1.5 text-sm font-semibold text-black disabled:cursor-not-allowed disabled:opacity-40"
+                              className="flex-1 rounded border overflow-hidden relative group border-[rgba(139,0,0,0.5)] bg-[#8B0000] px-3 py-2 text-sm font-bold text-[#f5e6c8] shadow-[0_4px_15px_rgba(139,0,0,0.3)] transition-all hover:translate-y-[-2px] hover:shadow-[0_8px_25px_rgba(139,0,0,0.4)] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:translate-y-0 disabled:hover:shadow-none"
                               onClick={() => startRound(n)}
                               disabled={!canStart}
                             >
                               Start
                             </button>
                             <button
-                              className="flex-1 rounded bg-ghost-gold/80 px-3 py-1.5 text-sm font-semibold text-black hover:bg-ghost-gold"
+                              className="flex-1 rounded border border-[rgba(201,163,78,0.4)] bg-transparent px-3 py-2 text-sm font-bold text-[#8B0000] transition-colors hover:bg-[rgba(139,0,0,0.08)]"
                               onClick={() => resetRound(n)}
                             >
                               Reset
@@ -528,7 +538,7 @@ export function AdminPage() {
                       );
                     })}
                   </div>
-                  <p className="mt-3 text-xs text-gray-500">
+                  <p className="mt-3 text-xs text-[rgba(26,26,26,0.65)]">
                     Start is blocked if the round already has matchups. Use
                     Reset first to clear stale pairings before restarting.
                   </p>
@@ -537,7 +547,7 @@ export function AdminPage() {
 
               {/* Matchups */}
               {matchups.length > 0 && (
-                <div className="rounded-xl bg-ghost-panel p-4">
+                <div className="rounded-xl bg-[rgba(255,250,240,0.95)] border border-[rgba(201,163,78,0.3)] shadow-[0_8px_30px_rgba(139,0,0,0.08)] p-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold">
                       Matchups (Round {eventState?.currentRound})
@@ -555,7 +565,7 @@ export function AdminPage() {
                     {matchups.map((m) => (
                       <div
                         key={m.id}
-                        className="flex flex-col gap-3 rounded-lg bg-black/30 p-3 md:flex-row md:items-center md:justify-between"
+                        className="flex flex-col gap-3 rounded-lg bg-[rgba(201,163,78,0.12)] border border-[rgba(201,163,78,0.25)] p-3 md:flex-row md:items-center md:justify-between"
                       >
                         <div className="flex flex-wrap items-center gap-3">
                           <span
@@ -567,7 +577,7 @@ export function AdminPage() {
                           >
                             {m.user1.name}
                           </span>
-                          <span className="text-gray-500">vs</span>
+                          <span className="text-[rgba(26,26,26,0.65)]">vs</span>
                           <span
                             className={
                               m.winner?.id === m.user2.id
@@ -579,7 +589,7 @@ export function AdminPage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-3 text-sm md:justify-end">
-                          <span className="text-gray-400">
+                          <span className="text-[var(--ink-light)]">
                             {m.problem.title}
                           </span>
                           {m.status === "COMPLETED" &&
@@ -595,7 +605,7 @@ export function AdminPage() {
                               m.status === "LIVE"
                                 ? "bg-ghost-green/20 text-ghost-green"
                                 : m.status === "COMPLETED"
-                                  ? "bg-gray-700 text-gray-300"
+                                  ? "bg-gray-700 text-[rgba(26,26,26,0.65)]"
                                   : "bg-ghost-gold/20 text-ghost-gold"
                             }`}
                           >
@@ -617,17 +627,17 @@ export function AdminPage() {
                 </div>
               )}
 
-              <div className="rounded-xl bg-ghost-panel p-4">
+              <div className="rounded-xl bg-[rgba(255,250,240,0.95)] border border-[rgba(201,163,78,0.3)] shadow-[0_8px_30px_rgba(139,0,0,0.08)] p-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold">
                     Proctoring: Fullscreen Status
                   </h2>
-                  <span className="text-xs text-gray-500">Live via socket</span>
+                  <span className="text-xs text-[rgba(26,26,26,0.65)]">Live via socket</span>
                 </div>
                 <div className="mt-3 overflow-x-auto">
                   <table className="w-full min-w-[640px] text-sm">
                     <thead>
-                      <tr className="border-b border-gray-700 text-left text-gray-400">
+                      <tr className="border-b border-[rgba(139,0,0,0.15)] text-left text-[var(--ink-light)]">
                         <th className="pb-2">Participant</th>
                         <th className="pb-2">Round</th>
                         <th className="pb-2">Fullscreen</th>
@@ -639,10 +649,10 @@ export function AdminPage() {
                       {examStatuses.map((s) => (
                         <tr
                           key={`${s.userId}:${s.roundNumber}`}
-                          className="border-b border-gray-800"
+                          className="border-b border-[rgba(139,0,0,0.15)]"
                         >
                           <td className="py-2 font-medium">{s.userName}</td>
-                          <td className="py-2 text-gray-300">
+                          <td className="py-2 text-[rgba(26,26,26,0.65)]">
                             {s.roundNumber}
                           </td>
                           <td className="py-2">
@@ -672,7 +682,7 @@ export function AdminPage() {
                                 Unblock
                               </button>
                             ) : (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-[rgba(26,26,26,0.65)]">
                                 Monitoring
                               </span>
                             )}
@@ -683,7 +693,7 @@ export function AdminPage() {
                   </table>
                 </div>
                 {examStatuses.length === 0 && (
-                  <p className="mt-3 text-sm text-gray-500">
+                  <p className="mt-3 text-sm text-[rgba(26,26,26,0.65)]">
                     No participant proctoring data yet.
                   </p>
                 )}
@@ -693,7 +703,7 @@ export function AdminPage() {
 
           {/* ── USERS ── */}
           {tab === "users" && (
-            <div className="rounded-xl bg-ghost-panel p-4">
+            <div className="rounded-xl bg-[rgba(255,250,240,0.95)] border border-[rgba(201,163,78,0.3)] shadow-[0_8px_30px_rgba(139,0,0,0.08)] p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Pending Users</h2>
                 <div className="flex items-center gap-2">
@@ -716,7 +726,7 @@ export function AdminPage() {
               </div>
 
               {pendingUsers.length > 0 && (
-                <div className="mt-3 flex items-center gap-2 text-sm text-gray-300">
+                <div className="mt-3 flex items-center gap-2 text-sm text-[rgba(26,26,26,0.65)]">
                   <input
                     id="select-all-pending"
                     type="checkbox"
@@ -734,7 +744,7 @@ export function AdminPage() {
                 {pendingUsers.map((u) => (
                   <div
                     key={u.id}
-                    className="flex flex-col gap-3 rounded-lg bg-black/30 p-3 md:flex-row md:items-center md:justify-between"
+                    className="flex flex-col gap-3 rounded-lg bg-[rgba(201,163,78,0.12)] border border-[rgba(201,163,78,0.25)] p-3 md:flex-row md:items-center md:justify-between"
                   >
                     <div className="flex items-start gap-3">
                       <input
@@ -745,7 +755,7 @@ export function AdminPage() {
                       />
                       <div>
                         <p className="font-medium">{u.name}</p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-[var(--ink-light)]">
                           {u.email} — {u.college}
                         </p>
                       </div>
@@ -767,7 +777,7 @@ export function AdminPage() {
                   </div>
                 ))}
                 {pendingUsers.length === 0 && (
-                  <p className="text-sm text-gray-500">No pending users.</p>
+                  <p className="text-sm text-[rgba(26,26,26,0.65)]">No pending users.</p>
                 )}
               </div>
             </div>
@@ -775,22 +785,22 @@ export function AdminPage() {
 
           {/* ── PROBLEMS ── */}
           {tab === "problems" && (
-            <div className="rounded-xl bg-ghost-panel p-4">
+            <div className="rounded-xl bg-[rgba(255,250,240,0.95)] border border-[rgba(201,163,78,0.3)] shadow-[0_8px_30px_rgba(139,0,0,0.08)] p-4">
               <h2 className="text-lg font-semibold">Create Problem</h2>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-sm text-gray-400">Title</label>
+                  <label className="text-sm text-[var(--ink-light)]">Title</label>
                   <input
-                    className="mt-1 w-full rounded bg-black/40 p-2"
+                    className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2"
                     value={pTitle}
                     onChange={(e) => setPTitle(e.target.value)}
                   />
                 </div>
                 <div className="grid gap-3 md:grid-cols-3">
                   <div className="flex-1">
-                    <label className="text-sm text-gray-400">Round</label>
+                    <label className="text-sm text-[var(--ink-light)]">Round</label>
                     <select
-                      className="mt-1 w-full rounded bg-black/40 p-2"
+                      className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2"
                       value={pRound}
                       onChange={(e) => setPRound(Number(e.target.value))}
                     >
@@ -800,9 +810,9 @@ export function AdminPage() {
                     </select>
                   </div>
                   <div className="flex-1">
-                    <label className="text-sm text-gray-400">Difficulty</label>
+                    <label className="text-sm text-[var(--ink-light)]">Difficulty</label>
                     <select
-                      className="mt-1 w-full rounded bg-black/40 p-2"
+                      className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2"
                       value={pDiff}
                       onChange={(e) => setPDiff(e.target.value)}
                     >
@@ -812,10 +822,10 @@ export function AdminPage() {
                     </select>
                   </div>
                   <div className="flex-1">
-                    <label className="text-sm text-gray-400">Time (s)</label>
+                    <label className="text-sm text-[var(--ink-light)]">Time (s)</label>
                     <input
                       type="number"
-                      className="mt-1 w-full rounded bg-black/40 p-2"
+                      className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2"
                       value={pTimeLimit}
                       onChange={(e) => setPTimeLimit(Number(e.target.value))}
                     />
@@ -823,18 +833,18 @@ export function AdminPage() {
                 </div>
               </div>
               <div className="mt-4">
-                <label className="text-sm text-gray-400">Description</label>
+                <label className="text-sm text-[var(--ink-light)]">Description</label>
                 <textarea
-                  className="mt-1 w-full rounded bg-black/40 p-2"
+                  className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2"
                   rows={5}
                   value={pDesc}
                   onChange={(e) => setPDesc(e.target.value)}
                 />
               </div>
               <div className="mt-4">
-                <label className="text-sm text-gray-400">Starter Code</label>
+                <label className="text-sm text-[var(--ink-light)]">Starter Code</label>
                 <textarea
-                  className="mt-1 w-full rounded bg-black/40 p-2 font-mono text-sm"
+                  className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2 font-mono text-sm"
                   rows={4}
                   value={pStarter}
                   onChange={(e) => setPStarter(e.target.value)}
@@ -846,20 +856,20 @@ export function AdminPage() {
                 </h3>
                 <div className="mt-2 grid gap-3 md:grid-cols-2">
                   <div>
-                    <label className="text-xs text-gray-400">Input</label>
+                    <label className="text-xs text-[var(--ink-light)]">Input</label>
                     <textarea
-                      className="mt-1 w-full rounded bg-black/40 p-2 font-mono text-sm"
+                      className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2 font-mono text-sm"
                       rows={2}
                       value={tcInput}
                       onChange={(e) => setTcInput(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-400">
+                    <label className="text-xs text-[var(--ink-light)]">
                       Expected Output
                     </label>
                     <textarea
-                      className="mt-1 w-full rounded bg-black/40 p-2 font-mono text-sm"
+                      className="mt-1 w-full rounded bg-[rgba(201,163,78,0.08)] border border-[rgba(139,0,0,0.2)] text-[var(--ink)] p-2 font-mono text-sm"
                       rows={2}
                       value={tcExpected}
                       onChange={(e) => setTcExpected(e.target.value)}
@@ -867,7 +877,7 @@ export function AdminPage() {
                   </div>
                 </div>
                 <div className="mt-2 flex items-center gap-3">
-                  <label className="flex items-center gap-1 text-sm text-gray-400">
+                  <label className="flex items-center gap-1 text-sm text-[var(--ink-light)]">
                     <input
                       type="checkbox"
                       checked={tcHidden}
@@ -924,7 +934,7 @@ export function AdminPage() {
 
           {/* ── LEADERBOARD ── */}
           {tab === "leaderboard" && (
-            <div className="rounded-xl bg-ghost-panel p-4">
+            <div className="rounded-xl bg-[rgba(255,250,240,0.95)] border border-[rgba(201,163,78,0.3)] shadow-[0_8px_30px_rgba(139,0,0,0.08)] p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Global Leaderboard</h2>
                 <button
@@ -937,7 +947,7 @@ export function AdminPage() {
               <div className="mt-4 overflow-x-auto">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="border-b border-gray-700 text-left text-gray-400">
+                    <tr className="border-b border-[rgba(139,0,0,0.15)] text-left text-[var(--ink-light)]">
                       <th className="pb-2">Rank</th>
                       <th className="pb-2">Name</th>
                       <th className="pb-2">College</th>
@@ -947,14 +957,14 @@ export function AdminPage() {
                   </thead>
                   <tbody>
                     {leaderboard.map((u, i) => (
-                      <tr key={u.id} className="border-b border-gray-800">
+                      <tr key={u.id} className="border-b border-[rgba(139,0,0,0.15)]">
                         <td
-                          className={`py-2 font-bold ${i === 0 ? "text-ghost-gold" : "text-gray-500"}`}
+                          className={`py-2 font-bold ${i === 0 ? "text-ghost-gold" : "text-[rgba(26,26,26,0.65)]"}`}
                         >
                           #{i + 1}
                         </td>
                         <td className="py-2 font-medium">{u.name}</td>
-                        <td className="py-2 text-gray-400">{u.college}</td>
+                        <td className="py-2 text-[var(--ink-light)]">{u.college}</td>
                         <td className="py-2 font-mono text-ghost-gold">
                           {u.bits}
                         </td>
@@ -971,7 +981,7 @@ export function AdminPage() {
                 </table>
               </div>
               {leaderboard.length === 0 && (
-                <p className="mt-4 text-sm text-gray-500">
+                <p className="mt-4 text-sm text-[rgba(26,26,26,0.65)]">
                   No participants yet.
                 </p>
               )}

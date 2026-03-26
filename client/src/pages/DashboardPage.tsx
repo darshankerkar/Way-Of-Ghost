@@ -6,6 +6,19 @@ import { getSocket } from "../socket/client";
 import type { EventState, LeaderboardEntry } from "../types";
 import { RoninFigure } from "./LandingPage";
 
+/* ─── Small helpers ───────────────────────────────────────────────────── */
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p style={{
+      fontFamily: "'Cinzel', serif", fontSize: "9px", fontWeight: 700,
+      letterSpacing: "0.28em", textTransform: "uppercase",
+      color: "rgba(139,0,0,0.55)", marginBottom: "4px",
+    }}>
+      {children}
+    </p>
+  );
+}
+
 export function DashboardPage() {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
@@ -17,36 +30,24 @@ export function DashboardPage() {
   const isRound2Locked = currentBits < 100;
   const isRound3Locked = currentBits < 200;
 
-  const navState = location.state as
-    | { r2Locked?: boolean; r3Locked?: boolean }
-    | null;
+  const navState = location.state as { r2Locked?: boolean; r3Locked?: boolean } | null;
   const r2Locked = navState?.r2Locked === true;
-  const r3Locked =
-    navState?.r3Locked === true;
+  const r3Locked = navState?.r3Locked === true;
 
   const enterRound = async (roundNumber: number) => {
     if (roundNumber === 2 && isRound2Locked) {
       navigate("/dashboard", { replace: true, state: { r2Locked: true } });
       return;
     }
-
     if (roundNumber === 3 && isRound3Locked) {
       navigate("/dashboard", { replace: true, state: { r3Locked: true } });
       return;
     }
-
     try {
-      const el = document.documentElement as HTMLElement & {
-        webkitRequestFullscreen?: () => Promise<void> | void;
-      };
-      if (typeof el.requestFullscreen === "function") {
-        await el.requestFullscreen();
-      } else if (typeof el.webkitRequestFullscreen === "function") {
-        await el.webkitRequestFullscreen();
-      }
-    } catch {
-      /* browser may block on first click — round page handles it */
-    }
+      const el = document.documentElement as HTMLElement & { webkitRequestFullscreen?: () => Promise<void> | void };
+      if (typeof el.requestFullscreen === "function") await el.requestFullscreen();
+      else if (typeof el.webkitRequestFullscreen === "function") await el.webkitRequestFullscreen();
+    } catch { /* browser may block */ }
     navigate(`/round/${roundNumber}`);
   };
 
@@ -59,218 +60,242 @@ export function DashboardPage() {
         ]);
         setEventState(event);
         setLeaderboard(board);
-      } catch {
-        // Keep current UI state on transient fetch errors.
-      }
+      } catch { /* Keep current UI on transient errors */ }
     };
-
     void loadDashboardData();
 
     const socket = getSocket();
     if (!socket) return;
-
-    const refreshOnRoundChange = () => {
-      void loadDashboardData();
-    };
-
+    const refreshOnRoundChange = () => { void loadDashboardData(); };
     socket.on("round:started", refreshOnRoundChange);
     socket.on("round:reset", refreshOnRoundChange);
-
     return () => {
       socket.off("round:started", refreshOnRoundChange);
       socket.off("round:reset", refreshOnRoundChange);
     };
   }, []);
 
-  const roundNames = [
-    "",
-    "Shrine Of Wisdom",
-    "Shadow Tactics",
-    "Khan's Ultimatum",
-  ];
-  const roundDescs = [
+  const roundNames  = ["", "Shrine Of Wisdom", "Shadow Tactics", "Khan's Ultimatum"];
+  const roundJp     = ["", "知恵の聖地", "影の戦術", "汗の最後通牒"];
+  const roundDescs  = [
     "",
     "1v1 Debugging Compiler — Find and fix bugs in Java code faster than your opponent",
     "1v1 Coding Duel — Solve algorithmic problems head-to-head",
     "MVP Building — Build a working prototype from a problem statement",
   ];
-  const roundIcons = ["", "R1", "R2", "R3"];
+
+  const cardStyle = {
+    background: "rgba(255, 250, 240, 0.8)",
+    backdropFilter: "blur(12px)",
+    border: "1px solid rgba(139,0,0,0.2)",
+    borderRadius: "4px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(201,163,78,0.3)",
+  };
 
   return (
-    <div className="app-shell min-h-screen text-white">
+    <div
+      className="app-shell min-h-screen"
+      style={{ color: "#1A1A1A" }}
+    >
       <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
-        {/* Header */}
-        <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+
+        {/* ── Header ── */}
+        <div
+          className="flex items-center justify-between flex-wrap gap-4 mb-6 rounded-2xl px-6 py-5"
+          style={cardStyle}
+        >
           <div>
-            <h1
-              className="text-2xl font-bold text-ghost-gold md:text-3xl"
-              style={{ fontFamily: "'Orbitron', sans-serif" }}
-            >
-              Dashboard
+            <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(24px,4vw,36px)", fontWeight: 800, color: "#1A1A1A", letterSpacing: "0.08em", marginBottom: "8px", textShadow: "0 0 15px rgba(139,0,0,0.2)" }}>
+              Warrior Dashboard
             </h1>
-            <p className="mt-1 text-gray-400 text-sm">
+            <p style={{ fontFamily: "'Yuji Boku', serif", fontSize: "16px", color: "rgba(26,26,26,0.85)" }}>
               Welcome back,{" "}
-              <span className="text-white font-semibold">
-                {user?.name ?? "participant"}
-              </span>
+              <span style={{ color: "#8B0000", fontWeight: 700, fontSize: "18px" }}>{user?.name ?? "participant"}</span>
+              &nbsp;— 侍の帰還
             </p>
           </div>
-          {/* Ronin badge */}
           <div className="flex items-center gap-3">
-            <div
-              style={{
-                width: "42px",
-                height: "42px",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
+            <div style={{ width: "42px", height: "42px", position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: "0px", left: "-9px" }}>
                 <RoninFigure scale={0.7} />
               </div>
             </div>
-            <div className="text-right">
-              <div className="rounded-full border border-ghost-gold/22 bg-ghost-gold/8 px-3 py-1 text-xs font-semibold text-ghost-gold">
-                Last Standing Ronin
-              </div>
+            <div
+              style={{
+                borderRadius: "999px", border: "1px solid rgba(139,0,0,0.22)",
+                background: "rgba(139,0,0,0.06)", padding: "4px 14px",
+                fontSize: "11px", fontFamily: "'Cinzel', serif", fontWeight: 600,
+                letterSpacing: "0.08em", color: "#8B0000",
+              }}
+            >
+              Last Standing Ronin
             </div>
           </div>
         </div>
 
-        {/* User stats */}
+        {/* ── User stats ── */}
         {myEntry && (
           <div className="grid grid-cols-3 gap-3 mb-6">
             {[
-              {
-                label: "Your Bits",
-                value: myEntry.bits,
-                color: "text-ghost-gold",
-              },
-              {
-                label: "Rank",
-                value: `#${leaderboard.findIndex((e) => e.id === user?.id) + 1}`,
-                color: "text-ghost-gold",
-              },
-              {
-                label: "Status",
-                value: myEntry.eliminated ? "Eliminated" : "Active",
-                color: myEntry.eliminated
-                  ? "text-ghost-red"
-                  : "text-ghost-green",
-              },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="glass-card p-4 text-center">
-                <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">
+              { label: "Your Bits", value: myEntry.bits, valueColor: "#C9A34E" },
+              { label: "Rank", value: `#${leaderboard.findIndex((e) => e.id === user?.id) + 1}`, valueColor: "#8B0000" },
+              { label: "Status", value: myEntry.eliminated ? "Eliminated" : "Active", valueColor: myEntry.eliminated ? "#8B0000" : "#4a7c59" },
+            ].map(({ label, value, valueColor }) => (
+              <div key={label} className="p-4 text-center" style={{...cardStyle, borderLeft: "4px solid #8B0000"}}>
+                <p style={{ fontSize: "11px", fontFamily: "'Cinzel', serif", fontWeight: 800, letterSpacing: "0.20em", textTransform: "uppercase", color: "rgba(26,26,26,0.70)", marginBottom: "8px" }}>
                   {label}
                 </p>
-                <p className={`text-2xl font-bold ${color}`}>{value}</p>
+                <p style={{ fontSize: "28px", fontWeight: 800, fontFamily: "'Cinzel', serif", color: valueColor, textShadow: "0 2px 10px rgba(0,0,0,0.15)" }}>{value}</p>
               </div>
             ))}
           </div>
         )}
 
-        {/* Active round banner */}
+        {/* ── Lock warnings ── */}
         {r3Locked && (
-          <div className="rounded-xl border border-ghost-red/40 bg-ghost-red/10 px-4 py-3 text-sm text-ghost-red text-center mb-4">
-            🔒 You need at least <strong>200 Bits</strong> to access Khan's
-            Ultimatum (Round 3). Keep earning!
+          <div style={{ borderRadius: "12px", border: "1px solid rgba(139,0,0,0.28)", background: "rgba(139,0,0,0.06)", padding: "12px 16px", fontSize: "13px", color: "#8B0000", textAlign: "center", marginBottom: "16px", fontFamily: "'Noto Serif JP', serif" }}>
+            🔒 You need at least <strong>200 Bits</strong> to access Khan's Ultimatum (Round 3). Keep earning!
           </div>
         )}
-
         {r2Locked && (
-          <div className="rounded-xl border border-ghost-red/40 bg-ghost-red/10 px-4 py-3 text-sm text-ghost-red text-center mb-4">
-            🔒 You need at least <strong>100 Bits</strong> to access Shadow
-            Tactics (Round 2).
+          <div style={{ borderRadius: "12px", border: "1px solid rgba(139,0,0,0.28)", background: "rgba(139,0,0,0.06)", padding: "12px 16px", fontSize: "13px", color: "#8B0000", textAlign: "center", marginBottom: "16px", fontFamily: "'Noto Serif JP', serif" }}>
+            🔒 You need at least <strong>100 Bits</strong> to access Shadow Tactics (Round 2).
           </div>
         )}
 
-        {eventState &&
-          eventState.roundStatus === "LIVE" &&
-          eventState.currentRound > 0 && (
-            <div className="glass-card border-ghost-gold/30 p-5 mb-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold text-ghost-gold uppercase tracking-widest mb-1">
-                    Round {eventState.currentRound} is LIVE
-                  </p>
-                  <p className="text-xl font-bold">
-                    {roundNames[eventState.currentRound]}
-                  </p>
-                  <p className="text-sm text-gray-300 mt-1">
-                    {roundDescs[eventState.currentRound]}
-                  </p>
-                </div>
-                <button
-                  onClick={() => void enterRound(eventState.currentRound)}
-                  disabled={
-                    (eventState.currentRound === 2 && isRound2Locked) ||
-                    (eventState.currentRound === 3 && isRound3Locked)
-                  }
-                  className="contest-btn-primary rounded-xl px-7 py-3 text-sm font-bold"
-                >
-                  Enter Round →
-                </button>
+        {/* ── Active Round Banner ── */}
+        {eventState && eventState.roundStatus === "LIVE" && eventState.currentRound > 0 && (
+          <div
+            className="p-5 mb-6"
+            style={{
+              ...cardStyle,
+              border: "1px solid rgba(139,0,0,0.35)",
+              background: "linear-gradient(135deg, rgba(255,252,243,0.98) 0%, rgba(250,238,218,0.94) 100%)",
+              position: "relative", overflow: "hidden",
+            }}
+          >
+            {/* top accent */}
+            <div style={{ position: "absolute", top: 0, left: "8%", right: "8%", height: "2px", background: "linear-gradient(90deg, transparent, rgba(139,0,0,0.55), transparent)" }} />
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p style={{ fontSize: "9px", fontFamily: "'Cinzel', serif", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#8B0000", marginBottom: "4px" }}>
+                  ⚔ Round {eventState.currentRound} is LIVE
+                </p>
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: "18px", fontWeight: 700, color: "#1A1A1A", marginBottom: "2px" }}>
+                  {roundNames[eventState.currentRound]}
+                </p>
+                <p style={{ fontFamily: "'Yuji Boku', serif", fontSize: "13px", color: "rgba(139,0,0,0.60)", marginBottom: "6px" }}>
+                  {roundJp[eventState.currentRound]}
+                </p>
+                <p style={{ fontSize: "13px", color: "rgba(26,26,26,0.55)", fontFamily: "'Noto Serif JP', serif" }}>
+                  {roundDescs[eventState.currentRound]}
+                </p>
               </div>
+              <button
+                onClick={() => void enterRound(eventState.currentRound)}
+                disabled={(eventState.currentRound === 2 && isRound2Locked) || (eventState.currentRound === 3 && isRound3Locked)}
+                className="contest-btn-primary rounded-xl px-7 py-3 text-sm font-bold disabled:opacity-50"
+              >
+                Enter Round →
+              </button>
             </div>
-          )}
+          </div>
+        )}
 
+        {/* ── No Round Active ── */}
         {(!eventState || eventState.roundStatus !== "LIVE") && (
-          <div className="glass-card p-6 text-center mb-6">
-            <div
-              className="flex justify-center mb-3"
-              style={{ height: "60px" }}
-            >
+          <div className="p-6 text-center mb-6" style={cardStyle}>
+            <div className="flex justify-center mb-3" style={{ height: "60px" }}>
               <div style={{ position: "relative", top: "-10px" }}>
                 <RoninFigure scale={0.55} />
               </div>
             </div>
-            <p className="text-gray-400">No round is currently active.</p>
-            <p className="mt-1 text-sm text-gray-500">
-              Wait for the admin to start a round.
+            <p style={{ fontFamily: "'Cinzel', serif", fontSize: "13px", color: "rgba(26,26,26,0.50)", marginBottom: "4px" }}>
+              No round is currently active.
+            </p>
+            <p style={{ fontFamily: "'Yuji Boku', serif", fontSize: "13px", color: "rgba(26,26,26,0.38)" }}>
+              待機中 — Wait for the admin to start a round.
             </p>
           </div>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-3 mb-6">
+        {/* ── Round Cards ── */}
+        <div className="grid gap-6 sm:grid-cols-3 mb-8">
           {[1, 2, 3].map((r) => {
-            const isLive =
-              eventState?.currentRound === r &&
-              eventState.roundStatus === "LIVE";
-            const isLocked =
-              (r === 2 && isRound2Locked) || (r === 3 && isRound3Locked);
+            const isLive = eventState?.currentRound === r && eventState.roundStatus === "LIVE";
+            const isLocked = (r === 2 && isRound2Locked) || (r === 3 && isRound3Locked);
             return (
               <button
                 key={r}
                 disabled={isLocked}
                 onClick={() => void enterRound(r)}
-                className={`glass-card p-5 group transition-all duration-200 text-left ${
-                  isLocked
-                    ? "opacity-40 cursor-not-allowed"
-                    : "hover:-translate-y-1 hover:border-ghost-gold/25 cursor-pointer"
-                } ${isLive ? "border-ghost-gold/35" : ""}`}
+                className="relative overflow-hidden group"
+                style={{
+                  ...cardStyle,
+                  background: isLive ? "linear-gradient(135deg, rgba(255,250,230,0.9) 0%, rgba(250,235,210,0.95) 100%)" : "rgba(255, 250, 240, 0.8)",
+                  padding: "24px",
+                  textAlign: "left",
+                  cursor: isLocked ? "not-allowed" : "pointer",
+                  opacity: isLocked ? 0.6 : 1,
+                  transition: "all 300ms cubic-bezier(0.25, 1, 0.5, 1)",
+                  border: isLive ? "2px solid #8B0000" : "1px solid rgba(139,0,0,0.3)",
+                  boxShadow: isLive ? "0 10px 40px rgba(139,0,0,0.2), inset 0 0 15px rgba(201,163,78,0.4)" : cardStyle.boxShadow,
+                  transform: "translateZ(0)",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isLocked) {
+                    (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-6px) scale(1.02)";
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 15px 40px rgba(139,0,0,0.25), inset 0 0 0 1px rgba(201,163,78,0.5)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "#8B0000";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isLocked) {
+                    (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0) scale(1)";
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = isLive ? "0 10px 40px rgba(139,0,0,0.2), inset 0 0 15px rgba(201,163,78,0.4)" : cardStyle.boxShadow as string;
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = isLive ? "#8B0000" : "rgba(139,0,0,0.3)";
+                  }
+                }}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="inline-flex h-8 min-w-8 items-center justify-center rounded-md border border-ghost-gold/30 px-2 text-xs font-bold tracking-wide text-ghost-gold">
-                    {roundIcons[r]}
+                {/* Dynamic hover overlay effect */}
+                {!isLocked && (
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" style={{ background: "radial-gradient(circle at center, rgba(139,0,0,0.05) 0%, transparent 60%)" }} />
+                )}
+                <div className="flex items-center justify-between mb-4 relative z-10">
+                  <span style={{
+                    display: "inline-flex", height: "34px", minWidth: "34px",
+                    alignItems: "center", justifyContent: "center",
+                    borderRadius: "4px",
+                    border: "1px solid #8B0000",
+                    padding: "0 10px",
+                    fontSize: "12px", fontWeight: 800, fontFamily: "'Cinzel', serif",
+                    letterSpacing: "0.10em", color: "#f5e6c8",
+                    background: "#5c0000",
+                    boxShadow: "0 2px 8px rgba(139,0,0,0.4)"
+                  }}>
+                    R{r}
                   </span>
                   {isLive && (
-                    <span className="contest-live-dot text-xs text-ghost-green font-semibold">
-                      LIVE
+                    <span className="animate-pulse" style={{ fontSize: "12px", fontFamily: "'Cinzel', serif", fontWeight: 800, letterSpacing: "0.14em", color: "#8B0000", textShadow: "0 0 10px rgba(139,0,0,0.3)" }}>
+                      ● LIVE
                     </span>
                   )}
                   {isLocked && (
-                    <span className="text-[10px] uppercase font-bold text-gray-500">
-                      {r === 2 ? "🔒 Need 100 Bits" : "🔒 Need 200 Bits"}
+                    <span style={{ fontSize: "11px", fontFamily: "'Cinzel', serif", fontWeight: 800, color: "rgba(26,26,26,0.6)" }}>
+                      {r === 2 ? "🔒 100 Bits" : "🔒 200 Bits"}
                     </span>
                   )}
                 </div>
-                <p className="text-xs uppercase tracking-widest text-gray-500">
+                <p style={{ fontSize: "11px", fontFamily: "'Cinzel', serif", fontWeight: 800, letterSpacing: "0.20em", textTransform: "uppercase", color: "rgba(26,26,26,0.7)", marginBottom: "6px" }}>
                   Round {r}
                 </p>
-                <p className="text-base font-bold mt-1 text-white group-hover:text-ghost-gold transition-colors">
+                <p style={{ fontFamily: "'Cinzel', serif", fontSize: "18px", fontWeight: 800, color: "#1A1A1A", marginBottom: "4px" }}>
                   {roundNames[r]}
                 </p>
-                <p className="mt-2 text-xs text-gray-400 leading-relaxed">
+                <p style={{ fontFamily: "'Yuji Boku', serif", fontSize: "14px", color: "#8B0000", marginBottom: "10px" }}>
+                  {roundJp[r]}
+                </p>
+                <p style={{ fontSize: "13px", color: "rgba(26,26,26,0.85)", lineHeight: 1.6, fontFamily: "'Noto Serif JP', serif" }}>
                   {roundDescs[r]}
                 </p>
               </button>
@@ -278,49 +303,55 @@ export function DashboardPage() {
           })}
         </div>
 
-        {/* Leaderboard */}
-        <section className="glass-card overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/7">
-            <h2
-              className="font-semibold text-ghost-gold"
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "13px",
-                letterSpacing: ".1em",
-              }}
-            >
-              Leaderboard
+        {/* ── Leaderboard ── */}
+        <section style={{ ...cardStyle, overflow: "hidden" }}>
+          <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(201,163,78,0.15)" }}>
+            <SectionLabel>⚔ Leaderboard</SectionLabel>
+            <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: "16px", fontWeight: 700, color: "#1A1A1A" }}>
+              Warriors Ranking
             </h2>
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-[rgba(201,163,78,0.15)]">
             {leaderboard.slice(0, 10).map((entry, i) => (
               <div
                 key={entry.id}
-                className={`flex items-center justify-between px-5 py-3 text-sm transition-colors ${entry.id === user?.id ? "bg-ghost-gold/6" : "hover:bg-white/3"}`}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "10px 20px", fontSize: "13px",
+                  background: entry.id === user?.id ? "rgba(139,0,0,0.04)" : "transparent",
+                  borderBottom: "1px solid rgba(201,163,78,0.10)",
+                  transition: "background 150ms",
+                }}
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span
-                    className={`font-bold tabular-nums w-6 flex-shrink-0 ${i === 0 ? "text-ghost-gold text-base" : i === 1 ? "text-gray-300" : i === 2 ? "text-amber-600" : "text-gray-600"}`}
-                  >
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+                  <span style={{
+                    fontWeight: 700, fontFamily: "'Cinzel', serif",
+                    fontSize: i === 0 ? "16px" : "13px",
+                    width: "24px", flexShrink: 0,
+                    color: i === 0 ? "#C9A34E" : i === 1 ? "rgba(26,26,26,0.60)" : i === 2 ? "#8B0000" : "rgba(26,26,26,0.35)",
+                  }}>
                     #{i + 1}
                   </span>
-                  <span
-                    className={`truncate ${entry.eliminated ? "text-gray-500 line-through" : "text-white"}`}
-                  >
+                  <span style={{
+                    color: entry.eliminated ? "rgba(26,26,26,0.35)" : "#1A1A1A",
+                    textDecoration: entry.eliminated ? "line-through" : "none",
+                    fontFamily: "'Noto Serif JP', serif",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
                     {entry.name}
                   </span>
-                  <span className="text-xs text-gray-600 hidden sm:block truncate">
+                  <span style={{ fontSize: "11px", color: "rgba(26,26,26,0.35)", display: "none" }} className="sm:block">
                     {entry.college}
                   </span>
                 </div>
-                <span className="font-mono font-bold text-ghost-gold flex-shrink-0">
+                <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, color: "#C9A34E", flexShrink: 0 }}>
                   {entry.bits}
                 </span>
               </div>
             ))}
             {leaderboard.length === 0 && (
-              <p className="px-5 py-6 text-sm text-gray-500 text-center">
-                No participants yet.
+              <p style={{ padding: "24px 20px", fontSize: "13px", color: "rgba(26,26,26,0.40)", textAlign: "center", fontFamily: "'Yuji Boku', serif" }}>
+                No warriors yet — the arena awaits.
               </p>
             )}
           </div>

@@ -128,7 +128,10 @@ export function Round1Page() {
 
   // Initial fetch
   useEffect(() => {
-    fetchMatchup();
+    const timeoutId = window.setTimeout(() => {
+      void fetchMatchup();
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [fetchMatchup]);
 
   // Safety poll to pick up latest matchup/problem after admin restarts round.
@@ -210,7 +213,7 @@ export function Round1Page() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [matchup?.id, matchup?.status]);
+  }, [matchup]);
 
   // Socket: join matchup room for live updates
   useEffect(() => {
@@ -248,7 +251,7 @@ export function Round1Page() {
       socket.off("matchup:result", handleResult);
       socket.off("submission:result", handleSubResult);
     };
-  }, [matchup?.id, user]);
+  }, [matchup, user]);
 
   useEffect(() => {
     if (matchResult?.winnerId !== user?.id) return;

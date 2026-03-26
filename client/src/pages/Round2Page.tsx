@@ -85,7 +85,9 @@ export function Round2Page() {
             if (saved) {
               try {
                 initialCode = { ...initialCode, ...JSON.parse(saved) };
-              } catch {} // ignore
+              } catch {
+                /* ignore invalid saved draft */
+              }
             }
             setCode(initialCode);
           }
@@ -136,7 +138,10 @@ export function Round2Page() {
 
   // Initial fetch
   useEffect(() => {
-    fetchMatchup();
+    const timeoutId = window.setTimeout(() => {
+      void fetchMatchup();
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [fetchMatchup]);
 
   // Persist code to localStorage
@@ -208,7 +213,7 @@ export function Round2Page() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [matchup?.id, matchup?.status]);
+  }, [matchup]);
 
   // Socket: join matchup room for live updates
   useEffect(() => {
@@ -246,7 +251,7 @@ export function Round2Page() {
       socket.off("matchup:result", handleResult);
       socket.off("submission:result", handleSubResult);
     };
-  }, [matchup?.id, user]);
+  }, [matchup, user]);
 
   useEffect(() => {
     if (matchResult?.winnerId !== user?.id) return;

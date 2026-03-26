@@ -11,6 +11,7 @@ export function useExamMode(roundLabel: string, roundNumber: number, active = tr
 
   useEffect(() => {
     if (!active) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFullscreenExitLocked(false);
       return;
     }
