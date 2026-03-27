@@ -5,6 +5,8 @@ export async function getEventState(_req, res) {
 }
 export async function getRoundMatchups(req, res) {
     const roundNumber = Number(req.params.roundNumber);
+    const userId = req.auth?.userId;
+    const isAdmin = req.auth?.role === "ADMIN";
     if (roundNumber === 2 && req.auth?.role !== "ADMIN") {
         const user = await prisma.user.findUnique({
             where: { id: req.auth.userId },
@@ -17,7 +19,14 @@ export async function getRoundMatchups(req, res) {
         }
     }
     const matchups = await prisma.matchup.findMany({
-        where: { roundNumber },
+        where: {
+            roundNumber,
+            ...(isAdmin || !userId
+                ? {}
+                : {
+                    OR: [{ user1Id: userId }, { user2Id: userId }],
+                }),
+        },
         include: {
             user1: { select: { id: true, name: true, eliminatedAt: true } },
             user2: { select: { id: true, name: true, eliminatedAt: true } },

@@ -27,7 +27,20 @@ export async function startRound(roundNumber) {
             ...(roundNumber === 2 ? { bits: { gte: 100 } } : {}),
         },
     });
-    if (users.length < 2 && (roundNumber === 1 || roundNumber === 2)) {
+    const uniqueUsers = Array.from(new Map(users.map((user) => [user.id, user])).values());
+    const alreadyAssigned = await prisma.matchup.findMany({
+        where: {
+            roundNumber,
+            status: { in: [MatchupStatus.PENDING, MatchupStatus.LIVE] },
+        },
+        select: {
+            user1Id: true,
+            user2Id: true,
+        },
+    });
+    const assignedUserIds = new Set(alreadyAssigned.flatMap((matchup) => [matchup.user1Id, matchup.user2Id]));
+    const availableUsers = uniqueUsers.filter((user) => !assignedUserIds.has(user.id));
+    if (availableUsers.length < 2 && (roundNumber === 1 || roundNumber === 2)) {
         if (roundNumber === 2) {
             throw new Error("Need at least 2 active participants with 100+ Bits to start round 2.");
         }
@@ -38,7 +51,7 @@ export async function startRound(roundNumber) {
         if (problems.length === 0) {
             throw new Error(`No problems configured for round ${roundNumber}.`);
         }
-        const list = shuffle(users);
+        const list = shuffle(availableUsers);
         const pairings = [];
         for (let i = 0; i + 1 < list.length; i += 2) {
             pairings.push({
