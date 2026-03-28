@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthGuard } from "./hooks/useAuthGuard";
 import { AdminGuard } from "./hooks/AdminGuard";
 import { AboutPage } from "./pages/AboutPage";
@@ -10,12 +10,6 @@ import { Round2Page } from "./pages/Round2Page";
 import { Round3Page } from "./pages/Round3Page";
 
 function App() {
-  const location = useLocation();
-  const isLandingRoute =
-    location.pathname === "/" ||
-    location.pathname === "/login" ||
-    location.pathname === "/register";
-
   return (
     <>
       <Routes>
