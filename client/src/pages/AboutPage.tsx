@@ -61,9 +61,9 @@ const rounds = [
     accent: "#8B0000",
     accentBg: "rgba(139,0,0,0.07)",
     accentBorder: "rgba(139,0,0,0.22)",
-    desc: "Put your Java debugging skills to the ultimate test. Code snippets with subtle bugs are presented — identify and fix them in a live compiler faster than your opponent. This round tests your deep understanding of language semantics, runtime behaviour, and common developer pitfalls under time pressure.",
+    desc: "Put your debugging skills to the ultimate test. Code snippets with subtle bugs are presented — identify and fix them in a live compiler faster than your opponent. This round tests your deep understanding of language semantics, runtime behaviour, and common developer pitfalls under time pressure.",
     rules: [
-      "Java-based debugging questions in a live compiler",
+      "Debugging questions in a live compiler",
       "Time-pressured rapid-fire bug fixing",
       "Each correct submission earns Bits currency",
       "Highest total Bits advances to Round 2",
@@ -140,50 +140,66 @@ export function AboutPage() {
 
         {/* ── Event Overview ── */}
         <section
-          className="rounded-[28px] p-8 md:p-12 mb-10"
+          className="rounded-[28px] p-8 md:p-12"
           style={{
             background: "linear-gradient(160deg, rgba(255,252,243,0.94) 0%, rgba(248,238,215,0.90) 100%)",
             border: "1px solid rgba(201,163,78,0.25)",
             boxShadow: "0 8px 32px rgba(26,26,26,0.08), inset 0 1px 0 rgba(255,255,255,0.80)",
-            position: "relative", overflow: "hidden",
+            position: "relative", overflow: "hidden", maxWidth: "1000px", margin: "0 auto 80px auto",
           }}
         >
           {/* Top accent line */}
           <div style={{ position: "absolute", top: 0, left: "10%", right: "10%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(139,0,0,0.40), transparent)" }} />
 
-          <div className="contest-badge inline-flex items-center gap-2 rounded-full px-4 py-1 mb-5">
-            ⚔ GDG VITM Event 2026 ⚔
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "40px", flexWrap: "wrap" }}>
+            <div style={{ flex: "1 1 0", minWidth: "260px" }}>
+              <div className="contest-badge inline-flex items-center gap-2 rounded-full px-4 py-1 mb-4">
+                ⚔ GDG VITM Event 2026 ⚔
+              </div>
+
+              <h1
+                className="contest-title mb-1"
+                style={{ fontSize: "clamp(28px, 4.3vw, 50px)", transform: "rotate(-0.4deg)" }}
+              >
+                Last Standing{" "}
+                <span style={{ color: "#8B0000", textShadow: "0 0 12px rgba(139,0,0,0.30)" }}>Ronin</span>
+              </h1>
+              <p style={{ fontFamily: "'Yuji Boku', serif", fontSize: "17px", color: "rgba(26,26,26,0.85)", marginBottom: "14px", transform: "rotate(-0.3deg)" }}>
+                最後の浪人
+              </p>
+              <div style={{ width: "80px", height: "3px", background: "#8B0000", borderRadius: "2px", opacity: 0.60, marginBottom: "16px" }} />
+
+              <p style={{ fontSize: "15px", lineHeight: 1.78, color: "#1A1A1A", fontFamily: "'Noto Serif JP', serif", margin: 0 }}>
+                <strong style={{ color: "#1A1A1A" }}>Last Standing Ronin</strong> is a high-stakes coding trial forged by{" "}
+                <strong style={{ color: "#1A1A1A" }}>GDG VIT Mumbai</strong>, where warriors of logic walk the path of the Ronin.
+                Participants must endure three relentless trials—beginning with precise debugging, advancing into intense 1v1 DSA duels,
+                and culminating in a strategic final battle of wit and resource. With each victory, they earn{" "}
+                <span style={{ color: "#b08d43", fontWeight: 600 }}>Bits</span>, the currency of survival, shaping their fate in the
+                final stage. Many will step onto the path, but only those who adapt, endure, and master their blade of logic will rise
+                as the Last Standing Ronin.
+              </p>
+            </div>
+
+            {/* Right: Dragon Image */}
+            <div
+              style={{
+                flexShrink: 0,
+                width: "clamp(240px, 28vw, 360px)",
+                alignSelf: "center",
+                position: "relative",
+              }}
+            >
+              <img
+                src="/dragon_final.png"
+                alt="Japanese Dragon"
+                style={{ width: "100%", height: "auto", display: "block", position: "relative", zIndex: 2, filter: "drop-shadow(0 12px 24px rgba(139,0,0,0.15))" }}
+                draggable={false}
+              />
+            </div>
           </div>
-
-          <h1
-            className="contest-title mb-2"
-            style={{ fontSize: "clamp(28px, 4.5vw, 52px)", transform: "rotate(-0.4deg)" }}
-          >
-            Last Standing{" "}
-            <span style={{ color: "#8B0000", textShadow: "0 0 12px rgba(139,0,0,0.30)" }}>Ronin</span>
-          </h1>
-          <p style={{ fontFamily: "'Yuji Boku', serif", fontSize: "17px", color: "rgba(26,26,26,0.85)", marginBottom: "20px", transform: "rotate(-0.3deg)" }}>
-            最後の浪人
-          </p>
-          <div style={{ width: "80px", height: "3px", background: "#8B0000", borderRadius: "2px", opacity: 0.60, marginBottom: "24px" }} />
-
-          <p style={{ maxWidth: "780px", fontSize: "15px", lineHeight: 1.85, color: "#1A1A1A", fontFamily: "'Noto Serif JP', serif" }}>
-            <strong style={{ color: "#1A1A1A" }}>Last Standing Ronin</strong> is a
-            high-stakes, multi-round competitive programming event organised by{" "}
-            <span style={{ color: "#8B0000", fontWeight: 600 }}>
-              Google Developer Groups VIT Mumbai
-            </span>
-            . Designed for precision coders, it pits participants against each
-            other in a brutal three-round elimination bracket — starting with
-            live Java debugging, moving through a 1v1 DSA duel, and culminating
-            in a strategic resource-auction finale. Participants earn{" "}
-            <span style={{ color: "#b08d43", fontWeight: 600 }}>Bits</span> — the
-            in-event currency that powers your final bid. Only the most adaptive
-            contestant claims the throne.
-          </p>
         </section>
 
-        {/* ── Roadmap ── */}
+
         <section className="mb-10">
           <div style={{ textAlign: "center", marginBottom: "32px" }}>
             <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: "13px", letterSpacing: "0.20em", textTransform: "uppercase", color: "#5f0000", marginBottom: "6px", fontWeight: 800 }}>

@@ -4,6 +4,7 @@ import { http } from "../api/http";
 import { useAuthStore } from "../store/auth.store";
 import { getSocket } from "../socket/client";
 import type { EventState, LeaderboardEntry } from "../types";
+import { JapaneseBorder } from "../components/JapaneseBorder";
 
 /* ─── Small helpers ───────────────────────────────────────────────────── */
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -102,16 +103,17 @@ export function DashboardPage() {
   const roundJp = ["", "知恵の聖地", "影の戦術", "汗の最後通牒"];
   const roundDescs = [
     "",
-    "1v1 Debugging Compiler — Find and fix bugs in Java code faster than your opponent",
+    "1v1 Debugging Compiler — Find and fix bugs in code faster than your opponent",
     "1v1 Coding Duel — Solve algorithmic problems head-to-head",
     "MVP Building — Build a working prototype from a problem statement",
   ];
 
   const cardStyle = {
+    position: "relative" as const,
     background: "rgba(255, 250, 240, 0.8)",
     backdropFilter: "blur(12px)",
     border: "1px solid rgba(139,0,0,0.2)",
-    borderRadius: "4px",
+    borderRadius: "0px",
     boxShadow:
       "0 8px 32px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(201,163,78,0.3)",
   };
@@ -121,10 +123,12 @@ export function DashboardPage() {
       <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
         {/* ── Header ── */}
         <div
-          className="flex items-center justify-between flex-wrap gap-4 mb-6 rounded-2xl px-6 py-5"
+          className="mb-6 px-6 py-5"
           style={cardStyle}
         >
-          <div>
+          <JapaneseBorder />
+          <div className="flex items-center justify-between flex-wrap gap-4 relative z-10">
+            <div>
             <h1
               style={{
                 fontFamily: "'Cinzel', serif",
@@ -171,6 +175,7 @@ export function DashboardPage() {
               Last Standing Ronin
             </div>
           </div>
+          </div>
         </div>
 
         {/* ── User stats ── */}
@@ -198,6 +203,8 @@ export function DashboardPage() {
                 className="p-4 text-center"
                 style={{ ...cardStyle, borderLeft: "4px solid #8B0000" }}
               >
+                <JapaneseBorder />
+                <div style={{ position: "relative", zIndex: 10 }}>
                 <p
                   style={{
                     fontSize: "11px",
@@ -222,6 +229,7 @@ export function DashboardPage() {
                 >
                   {value}
                 </p>
+                </div>
               </div>
             ))}
           </div>
@@ -277,9 +285,10 @@ export function DashboardPage() {
                 background:
                   "linear-gradient(135deg, rgba(255,252,243,0.98) 0%, rgba(250,238,218,0.94) 100%)",
                 position: "relative",
-                overflow: "hidden",
               }}
             >
+              <JapaneseBorder />
+              <div style={{ position: "relative", zIndex: 10 }}>
               {/* top accent */}
               <div
                 style={{
@@ -349,12 +358,15 @@ export function DashboardPage() {
                   Enter Round →
                 </button>
               </div>
+              </div>
             </div>
           )}
 
         {/* ── No Round Active ── */}
         {(!eventState || eventState.roundStatus !== "LIVE") && (
           <div className="p-6 text-center mb-6" style={cardStyle}>
+            <JapaneseBorder />
+            <div style={{ position: "relative", zIndex: 10 }}>
             <div
               className="flex justify-center mb-3"
               style={{ height: "60px" }}
@@ -391,6 +403,7 @@ export function DashboardPage() {
             >
               待機中 — Wait for the admin to start a round.
             </p>
+            </div>
           </div>
         )}
 
@@ -449,6 +462,7 @@ export function DashboardPage() {
                   }
                 }}
               >
+                <JapaneseBorder />
                 {/* Dynamic hover overlay effect */}
                 {!isLocked && (
                   <div
@@ -581,7 +595,9 @@ export function DashboardPage() {
         </div>
 
         {/* ── Leaderboard ── */}
-        <section style={{ ...cardStyle, overflow: "hidden" }}>
+        <section style={{ ...cardStyle }}>
+          <JapaneseBorder />
+          <div style={{ position: "relative", zIndex: 10 }}>
           <div
             style={{
               padding: "16px 20px",
@@ -697,6 +713,7 @@ export function DashboardPage() {
                 No warriors yet — the arena awaits.
               </p>
             )}
+          </div>
           </div>
         </section>
       </div>

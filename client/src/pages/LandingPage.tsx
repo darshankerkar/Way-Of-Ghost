@@ -296,7 +296,7 @@ function VideoIntro({ onDone }: { onDone: () => void }) {
               e.currentTarget.style.background = "rgba(139,0,0,0.85)";
             }}
           >
-            ENTER ARENA
+            WALK THE PATH
           </button>
         </div>
       )}
@@ -612,7 +612,7 @@ function RegisterModal({ onClose }: { onClose: () => void }) {
               > = {
                 "Full Name": {
                   type: "text",
-                  placeholder: "John Doe",
+                  placeholder: "Enter warrior name",
                   value: name,
                   onChange: setName,
                 },
@@ -735,7 +735,7 @@ function RegisterModal({ onClose }: { onClose: () => void }) {
 }
 
 /* ─── LANDING PAGE ──────────────────────────────────────────────────── */
-export function LandingPage() {
+export function LandingPage({ onVideoIntroDone }: { onVideoIntroDone?: () => void } = {}) {
   const [videoDone, setVideoDone] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -780,7 +780,7 @@ export function LandingPage() {
       style={{ color: "#1A1A1A" }}
     >
       {/* Video intro */}
-      {!videoDone && <VideoIntro onDone={() => setVideoDone(true)} />}
+      {!videoDone && <VideoIntro onDone={() => { setVideoDone(true); onVideoIntroDone?.(); }} />}
 
       {/* Background atmosphere */}
       <div
@@ -911,7 +911,7 @@ export function LandingPage() {
             }}
             className="contest-btn-primary rounded-xl px-6 py-3 text-sm font-semibold text-center"
           >
-            Enter Arena
+            Walk the Path
           </button>
           <button
             onClick={() => {
@@ -926,10 +926,10 @@ export function LandingPage() {
       </div>
 
       {/* ── SECTION 1: HERO ── */}
-      <section className="relative z-10 flex items-center justify-center px-4 py-8 mt-4 md:mt-8">
-        <div className="hero-glass-card flex flex-col items-center text-center max-w-[700px] w-full pb-8">
+      <section className="relative z-10 flex items-center justify-center px-4 py-8 mt-2 md:mt-4">
+        <div className="hero-glass-card flex flex-col items-center text-center max-w-[640px] w-full pb-8">
           {/* Event badge */}
-          <div className="contest-badge inline-flex items-center gap-2 rounded-full px-5 py-1.5 mb-6">
+          <div className="contest-badge inline-flex items-center gap-2 rounded-full px-5 py-1.5 mb-5">
             ⚔ GDG VITM Event 2026 ⚔
           </div>
 
@@ -937,7 +937,7 @@ export function LandingPage() {
           <h1
             className="contest-title leading-[1.08] mb-2"
             style={{
-              fontSize: "clamp(38px, 6.5vw, 72px)",
+              fontSize: "clamp(34px, 6vw, 64px)",
               transform: "rotate(-0.5deg)",
             }}
           >
@@ -976,16 +976,19 @@ export function LandingPage() {
             <span>Survive</span>
           </p>
 
-          {/* Event description */}
-          <p className="hero-description mb-10">
-            A high-stakes, multi-round DSA battleground organised by{" "}
-            <span style={{ color: "#8B0000", fontWeight: 600 }}>
-              Google Developer Groups VIT Mumbai
-            </span>
-            . Duel opponents head-to-head, survive the quiz sprint, and
-            strategise your way to the throne in a three-round elimination
-            tournament built for precision coders.
-          </p>
+          {/* Cinematic description */}
+          <div
+            className="hero-description"
+            style={{ textAlign: "center", marginBottom: "20px" }}
+          >
+            <p style={{ fontWeight: 500, margin: 0 }}>
+              In the arena of code, where logic is your blade and time your enemy… GDG VIT Mumbai summons you. Three trials await each deadlier than the last. Many will fall. Few will endure. Only one path remains -
+              <br />
+              <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, color: "#8B0000", letterSpacing: "0.05em" }}>
+                Become the Last Standing Ronin.
+              </span>
+            </p>
+          </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-4">
@@ -1016,7 +1019,7 @@ export function LandingPage() {
             <div className="corner bottom-right" aria-hidden="true" />
 
             <img
-              src="/finall_path.png"
+              src="/path_final.png"
               alt="Ronin Path"
               className="w-full h-auto block relative z-0"
             />
