@@ -117,10 +117,14 @@ export function Navbar() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                  className={`rounded-lg px-4 py-1.5 text-[15px] font-bold tracking-wide transition-all duration-200 font-['Cinzel',serif] border ${
                     isActive(link.to)
-                      ? "bg-ghost-gold/14 text-ghost-gold"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                      ? inRound
+                        ? "bg-[rgba(201,163,78,0.15)] text-[#c9a34e] shadow-[0_0_10px_rgba(201,163,78,0.2)] border-[rgba(201,163,78,0.3)]"
+                        : "bg-[rgba(139,0,0,0.06)] text-[#8B0000] shadow-[0_2px_10px_rgba(139,0,0,0.05)] border-[rgba(139,0,0,0.25)]"
+                      : inRound
+                        ? "text-[rgba(255,255,255,0.55)] hover:text-[#c9a34e] hover:bg-[rgba(201,163,78,0.08)] border-transparent"
+                        : "text-[rgba(26,26,26,0.55)] hover:text-[#8B0000] hover:bg-[rgba(139,0,0,0.06)] border-transparent hover:border-[rgba(139,0,0,0.15)]"
                   }`}
                 >
                   {link.label}
@@ -143,17 +147,13 @@ export function Navbar() {
                 style={{ width: "118px", height: "54px", objectFit: "contain", transform: "scale(1.12)", filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.18))" }}
               />
             </div>
-            <span className="hidden sm:block text-xs text-gray-400 max-w-[110px] truncate">
+            <span className={`hidden sm:block text-[13px] font-bold font-['Cinzel',serif] max-w-[110px] truncate ${inRound ? "text-[rgba(255,255,255,0.7)]" : "text-[#1A1A1A]"}`}>
               {user.name}
             </span>
-            {user.role === "ADMIN" && (
-              <span className="rounded-full bg-ghost-gold/14 px-2 py-0.5 text-xs font-bold text-ghost-gold border border-ghost-gold/22">
-                ADMIN
-              </span>
-            )}
+
             <button
               onClick={handleLogout}
-              className="rounded-lg border border-ghost-gold/50 px-3 py-1.5 text-xs text-ghost-gold hover:border-ghost-gold hover:text-ghost-gold hover:bg-ghost-gold/10 transition-colors"
+              className={`rounded border px-4 py-1.5 text-xs font-bold tracking-widest font-['Cinzel',serif] transition-all uppercase ${inRound ? "border-[rgba(201,163,78,0.5)] text-[#c9a34e] hover:bg-[rgba(201,163,78,0.15)]" : "border-[rgba(139,0,0,0.5)] text-[#8B0000] hover:bg-[rgba(139,0,0,0.08)] hover:shadow-md"}`}
             >
               Logout
             </button>
