@@ -7,6 +7,7 @@ import { getSocket } from "../socket/client";
 import { useTheme } from "../theme/ThemeProvider";
 import { useExamMode } from "../hooks/useExamMode";
 import type { Matchup, Problem, RunResult, SubmissionResult } from "../types";
+import { RoundResultOverlay } from "../components/RoundResultOverlay";
 
 const LANGUAGES = [
   { label: "Java", value: "java" },
@@ -380,35 +381,13 @@ export function Round2Page() {
         </div>
       )}
 
-      {/* Win/lose overlay */}
-
-      {matchResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-          <div
-            className={`rounded-lg p-12 text-center ${
-              matchResult.winnerId && matchResult.winnerId === user?.id
-                ? "border-2 border-ghost-green shadow-[0_0_40px_rgba(46,204,113,0.5)]"
-                : "border-2 border-ghost-red shadow-[0_0_40px_rgba(231,76,60,0.5)]"
-            }`}
-          >
-            <h2 className="text-5xl font-bold">
-              {matchResult.winnerId === null ? (
-                <span className="text-ghost-red">BLIND LEADING THE BLIND</span>
-              ) : matchResult.winnerId === user?.id ? (
-                <span className="text-ghost-green">NOT DEAD YET</span>
-              ) : (
-                <span className="text-ghost-red">TOTALLY OBLITERATED</span>
-              )}
-            </h2>
-            <p className="mt-4 text-xl text-gray-300">
-              {matchResult.winnerId === null
-                ? "Pathetic display. You both fumbled in the dark until the clock ran out."
-                : matchResult.winnerId === user?.id
-                  ? "You slithered past this one. But enjoy it while it lasts—the final round is going to utterly destroy you."
-                  : "You stepped on every single trap. Your code is a burning pile of garbage and you are entirely unworthy."}
-            </p>
-          </div>
-        </div>
+      {/* Cinematic win/lose overlay */}
+      {matchResult && user && (
+        <RoundResultOverlay
+          winnerId={matchResult.winnerId}
+          userId={user.id}
+          roundNumber={2}
+        />
       )}
 
       {/* Header */}

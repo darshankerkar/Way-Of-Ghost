@@ -7,6 +7,7 @@ import { getSocket } from "../socket/client";
 import { useTheme } from "../theme/ThemeProvider";
 import { useExamMode } from "../hooks/useExamMode";
 import { RoundBackground } from "../components/RoundBackground";
+import { RoundResultOverlay } from "../components/RoundResultOverlay";
 import type { Matchup, Problem, RunResult, SubmissionResult } from "../types";
 
 const ROUND_DURATION = 15 * 60;
@@ -384,40 +385,13 @@ export function Round1Page() {
         </div>
       )}
 
-      {/* Win/lose overlay */}
-
-      {matchResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-          <div
-            className={`rounded-lg p-12 text-center ${
-              matchResult.winnerId && matchResult.winnerId === user?.id
-                ? "border-2 border-ghost-green shadow-[0_0_40px_rgba(46,204,113,0.5)]"
-                : "border-2 border-ghost-red shadow-[0_0_40px_rgba(231,76,60,0.5)]"
-            }`}
-          >
-            <h2 className="text-5xl font-bold">
-              {matchResult.winnerId === null ? (
-                <span className="text-ghost-red">MUTUAL DISHONOR</span>
-              ) : matchResult.winnerId === user?.id ? (
-                <span className="text-ghost-green">YOU SURVIVED... FOR NOW</span>
-              ) : (
-                <span className="text-ghost-red">ABSOLUTE DISGRACE</span>
-              )}
-            </h2>
-            <p className="mt-4 text-xl text-gray-300">
-              {matchResult.winnerId === null
-                ? "Two fools staring at a screen. Both of your bloodlines end here."
-                : matchResult.winnerId === user?.id
-                  ? "Congrats, you beat a peasant. Don't get cocky, Round 2 will chew you up and spit you out."
-                  : "Even a headless chicken writes better code. Your keyboard should be confiscated to spare your ancestors the shame."}
-            </p>
-            {matchResult.winnerId === user?.id && (
-              <p className="mt-2 text-sm text-ghost-green/90">
-                You survived this stage
-              </p>
-            )}
-          </div>
-        </div>
+      {/* Cinematic win/lose overlay */}
+      {matchResult && user && (
+        <RoundResultOverlay
+          winnerId={matchResult.winnerId}
+          userId={user.id}
+          roundNumber={1}
+        />
       )}
 
       {/* Header */}
