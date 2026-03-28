@@ -282,7 +282,7 @@ html[data-round="true"]:fullscreen body {
 
 .contest-btn-primary {
   color: var(--washi);
-  background: linear-gradient(135deg, #af7c76, #9c6c66);
+  background: #8B0000;
   border: 1px solid rgba(201,163,78,0.40);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
   text-shadow: 0 1px 3px rgba(0,0,0,0.35);
@@ -297,7 +297,7 @@ html[data-round="true"]:fullscreen body {
 .contest-btn-primary:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 4px 12px rgba(139,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.20);
-  background: linear-gradient(135deg, #8B0000, #a80000);
+  background: #a80000;
 }
 
 .contest-btn-secondary {

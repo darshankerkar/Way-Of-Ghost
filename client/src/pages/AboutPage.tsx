@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { GdgLogo } from "./LandingPage";
+import { JapaneseBorder } from "../components/JapaneseBorder";
 
 /* ─── Icons ──────────────────────────────────────────────────────────── */
 function IconSword() {
@@ -145,14 +146,14 @@ export function AboutPage() {
             background: "linear-gradient(160deg, rgba(255,252,243,0.94) 0%, rgba(248,238,215,0.90) 100%)",
             border: "1px solid rgba(201,163,78,0.25)",
             boxShadow: "0 8px 32px rgba(26,26,26,0.08), inset 0 1px 0 rgba(255,255,255,0.80)",
-            position: "relative", overflow: "hidden", maxWidth: "1000px", margin: "0 auto 80px auto",
+            position: "relative", overflow: "hidden", maxWidth: "1400px", margin: "0 auto 80px auto",
           }}
         >
           {/* Top accent line */}
           <div style={{ position: "absolute", top: 0, left: "10%", right: "10%", height: "1px", background: "linear-gradient(90deg, transparent, rgba(139,0,0,0.40), transparent)" }} />
 
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "40px", flexWrap: "wrap" }}>
-            <div style={{ flex: "1 1 0", minWidth: "260px" }}>
+          <div style={{ position: "relative", zIndex: 10 }}>
+            <div style={{ maxWidth: "1040px" }}>
               <div className="contest-badge inline-flex items-center gap-2 rounded-full px-4 py-1 mb-4">
                 ⚔ GDG VITM Event 2026 ⚔
               </div>
@@ -178,23 +179,6 @@ export function AboutPage() {
                 final stage. Many will step onto the path, but only those who adapt, endure, and master their blade of logic will rise
                 as the Last Standing Ronin.
               </p>
-            </div>
-
-            {/* Right: Dragon Image */}
-            <div
-              style={{
-                flexShrink: 0,
-                width: "clamp(240px, 28vw, 360px)",
-                alignSelf: "center",
-                position: "relative",
-              }}
-            >
-              <img
-                src="/dragon_final.png"
-                alt="Japanese Dragon"
-                style={{ width: "100%", height: "auto", display: "block", position: "relative", zIndex: 2, filter: "drop-shadow(0 12px 24px rgba(139,0,0,0.15))" }}
-                draggable={false}
-              />
             </div>
           </div>
         </section>
@@ -270,10 +254,11 @@ export function AboutPage() {
             {rounds.map((r) => (
               <div
                 key={r.number}
-                className="about-round-card rounded-2xl p-6 md:p-8"
-                style={{ borderColor: r.accentBorder }}
+                className="about-round-card p-6 md:p-8"
+                style={{ borderColor: r.accentBorder, position: "relative", borderRadius: "0px" }}
               >
-                <div className="flex flex-wrap items-start gap-6">
+                <JapaneseBorder />
+                <div className="flex flex-wrap items-start gap-6" style={{ position: "relative", zIndex: 10 }}>
                   <div
                     className="w-14 h-14 rounded-xl flex flex-col items-center justify-center border shrink-0"
                     style={{ background: r.accentBg, borderColor: r.accentBorder, color: r.accent }}
@@ -318,25 +303,30 @@ export function AboutPage() {
 
         {/* ── Bits Economy ── */}
         <div
-          className="mt-8 rounded-2xl p-6 md:p-8"
+          className="mt-8 p-6 md:p-8"
           style={{
             background: "linear-gradient(160deg, rgba(250,243,228,.92), rgba(240,228,200,.88))",
             border: "1px solid rgba(201,163,78,0.22)",
+            position: "relative",
+            borderRadius: "0px",
           }}
         >
-          <div className="flex items-center gap-3 mb-3">
-            <span style={{ color: "#b08d43" }}><IconCoins /></span>
-            <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: "14px", fontWeight: 800, color: "#b08d43", letterSpacing: "0.12em", textTransform: "uppercase" }}>
-              Bits — The Currency of the Arena
-            </h3>
+          <JapaneseBorder />
+          <div style={{ position: "relative", zIndex: 10 }}>
+            <div className="flex items-center gap-3 mb-3">
+              <span style={{ color: "#b08d43" }}><IconCoins /></span>
+              <h3 style={{ fontFamily: "'Cinzel', serif", fontSize: "14px", fontWeight: 800, color: "#b08d43", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                Bits — The Currency of the Arena
+              </h3>
+            </div>
+            <p style={{ fontSize: "15px", color: "#1d1d1d", lineHeight: 1.80, fontFamily: "'Noto Serif JP', serif" }}>
+              Bits are the scoring and bidding currency used throughout the event.
+              Correct submissions, quiz answers, and round victories earn Bits. In
+              Round 3 (Khan's Ultimatum), your accumulated Bits power your auction
+              bids — so every point earned earlier directly fuels your final shot
+              at the throne. The global leaderboard tracks Bits in real time.
+            </p>
           </div>
-          <p style={{ fontSize: "15px", color: "#1d1d1d", lineHeight: 1.80, fontFamily: "'Noto Serif JP', serif" }}>
-            Bits are the scoring and bidding currency used throughout the event.
-            Correct submissions, quiz answers, and round victories earn Bits. In
-            Round 3 (Khan's Ultimatum), your accumulated Bits power your auction
-            bids — so every point earned earlier directly fuels your final shot
-            at the throne. The global leaderboard tracks Bits in real time.
-          </p>
         </div>
 
         {/* ── Eligibility + Stack ── */}
@@ -363,23 +353,28 @@ export function AboutPage() {
           ].map((block) => (
             <div
               key={block.title}
-              className="rounded-2xl p-6"
+              className="p-6"
               style={{
                 background: "linear-gradient(160deg, rgba(250,243,228,.92), rgba(240,228,200,.88))",
                 border: "1px solid rgba(201,163,78,0.20)",
+                position: "relative",
+                borderRadius: "0px",
               }}
             >
-              <h3 style={{ fontSize: "12px", fontFamily: "'Cinzel', serif", fontWeight: 800, color: "#8B0000", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: "16px" }}>
-                {block.title}
-              </h3>
-              <ul className="space-y-2">
-                {block.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2" style={{ fontSize: "14px", color: "#1d1d1d", fontFamily: "'Noto Serif JP', serif" }}>
-                    <span style={{ color: "#b08d43", marginTop: "2px", flexShrink: 0 }}><IconChevron /></span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <JapaneseBorder />
+              <div style={{ position: "relative", zIndex: 10 }}>
+                <h3 style={{ fontSize: "12px", fontFamily: "'Cinzel', serif", fontWeight: 800, color: "#8B0000", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: "16px" }}>
+                  {block.title}
+                </h3>
+                <ul className="space-y-2">
+                  {block.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2" style={{ fontSize: "14px", color: "#1d1d1d", fontFamily: "'Noto Serif JP', serif" }}>
+                      <span style={{ color: "#b08d43", marginTop: "2px", flexShrink: 0 }}><IconChevron /></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
